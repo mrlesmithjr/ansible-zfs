@@ -1,0 +1,32 @@
+---
+- name: debian | installing pre-reqs
+  apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - lsb-release
+
+- name: debian | adding zfs repo key
+  apt_key:
+    url: "{{ zfs_debian_package_key }}"
+    state: present
+
+- name: debian | downloading zfs package
+  get_url:
+    url: "{{ zfs_debian_package_url }}/{{ zfs_debian_package }}"
+    dest: "/opt/{{ zfs_debian_package }}"
+
+- name: debian | installing zfs package
+  apt:
+    deb: "/opt/{{ zfs_debian_package }}"
+    state: present
+
+- name: debian | installing zfs
+  apt:
+    name: "debian-zfs"
+    state: present
+
+- name: debian | enabling zfs module
+  modprobe:
+    name: "zfs"
+    state: present

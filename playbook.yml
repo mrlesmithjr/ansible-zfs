@@ -1,0 +1,13 @@
+---
+- name: Installs ZFS On Linux
+  hosts: all
+  become: true
+  vars:
+    - zfs_iscsistarget_iqn: iqn.2001-04.local.vagrant  #define your FQDN in reverse...(local.vagrant)
+    - zfs_iscsitarget_target_portals:
+        - 192.168.202.0/24
+    - zfs_enable_iscsi: true
+    - zfs_enable_nfs: true
+  roles:
+    - role: ansible-zfs
+  tasks:
