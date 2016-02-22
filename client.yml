@@ -1,0 +1,24 @@
+---
+- hosts: all
+  become: true
+  vars:
+    - iscsi_mount_on_boot: true
+    - iscsi_portal: 192.168.202.201
+    - iscsi_targets:
+        - 'iqn.2001-04.local.vagrant:storage.backups'
+        - 'iqn.2001-04.local.vagrant:storage.data'
+  roles:
+  tasks:
+    - name: ensuring open-iscsi is installed
+      apt:
+        name: "open-iscsi"
+        state: present
+
+    - name: mounting iscsi from server
+      open_iscsi:
+        portal: "{{ iscsi_portal }}"
+        login: yes
+        discover: yes
+        target: "{{ item }}"
+        auto_node_startup: "{{ iscsi_mount_on_boot }}"
+      with_items: iscsi_targets
