@@ -62,6 +62,7 @@ zfs_debian_package_url: 'http://archive.zfsonlinux.org/debian/pool/main/z/zfsonl
 zfs_debian_package_version: 6
 zfs_enable_iscsi: false  #defines if iscsitarget is installed to server iSCSI volumes
 zfs_enable_nfs: false  #defines if NFS Kernel Server should be installed to serve NFS
+zfs_enable_performance_tuning: false  #defines if paramaters defined in zfs_performance_tuning are applied
 zfs_filesystems:  #defines filesystems to manage
   - name: 'nfs'
     pool: 'tank'
@@ -82,6 +83,17 @@ zfs_iscsitarget_target_portals:
   - ALL  #define IP address to listen for iSCSI connections | ALL (default) | cidr (x.x.x.x/xx) | disable ALL if defining cidr
 #  - 10.0.2.0/24
 #  - 192.168.2.0/24
+zfs_performance_tuning:
+  - param: 'zfs_prefetch_disable'
+    value: '1'
+  - param: 'zfs_txg_timeout'
+    value: '5'
+  - param: 'zfs_arc_max'
+    value: '{{ (ansible_memtotal_mb | int * 0.5) | round | int }}'  # 1/2 total system memory
+  - param: 'zfs_arc_meta_limit'
+    value: '{{ (ansible_memtotal_mb | int * 0.125) | round | int }}'  # 1/4 zfs_arc_max
+  - param: 'zfs_arc_min'
+    value: '{{ (ansible_memtotal_mb | int * 0.0625) | round | int }}'  # 1/2 zfs_arc_meta_limit
 zfs_pools:  #defines zpool(s) to manage
   - name: tank
 #    atime: 'on'
