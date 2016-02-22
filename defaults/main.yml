@@ -33,11 +33,11 @@ zfs_performance_tuning:
   - param: 'zfs_txg_timeout'
     value: '5'
   - param: 'zfs_arc_max'
-    value: '{{ (ansible_memtotal_mb | int * 0.5) | round | int }}'  # 1/2 total system memory
+    value: '{{ (ansible_memtotal_mb | int * 1024 * 1024 * 0.5) | round | int }}'  # 1/2 total system memory
   - param: 'zfs_arc_meta_limit'
-    value: '{{ (ansible_memtotal_mb | int * 0.125) | round | int }}'  # 1/4 zfs_arc_max
+    value: '{{ (ansible_memtotal_mb | int * 1024 * 1024 * 0.125) | round | int }}'  # 1/4 zfs_arc_max
   - param: 'zfs_arc_min'
-    value: '{{ (ansible_memtotal_mb | int * 0.0625) | round | int }}'  # 1/2 zfs_arc_meta_limit
+    value: '{{ (ansible_memtotal_mb | int * 1024 * 1024 * 0.0625) | round | int }}'  # 1/2 zfs_arc_meta_limit
 zfs_pools:  #defines zpool(s) to manage
   - name: tank
 #    atime: 'on'
