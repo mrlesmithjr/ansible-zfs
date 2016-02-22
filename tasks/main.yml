@@ -7,3 +7,8 @@
   when: ansible_distribution == "Ubuntu"
 
 - include: manage_zfs.yml
+
+- include: tune_zfs.yml
+  when: >
+        zfs_enable_performance_tuning is defined and
+        zfs_enable_performance_tuning
