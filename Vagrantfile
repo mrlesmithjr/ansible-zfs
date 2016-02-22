@@ -18,7 +18,8 @@ Vagrant.configure(2) do |config|
         vb.customize ['createhd', '--filename', disk, '--variant', 'Fixed', '--size', 10 * 1024]
       end
       vb.memory = "1024"
-      vb.customize ['storageattach', :id,  '--storagectl', 'SATAController', '--port', 1, '--device', 0, '--type', 'hdd', '--medium', disk]
+      vb.customize ['storageattach', :id,  '--storagectl', 'SATAController', '--port', 1, '--device', 0, '--type', 'hdd', '--medium', disk] #Ubuntu
+#      vb.customize ['storageattach', :id,  '--storagectl', 'SATA Controller', '--port', 1, '--device', 0, '--type', 'hdd', '--medium', disk] #Debian
     end
     zfs.vm.provision :shell, path: "provision.sh", keep_color: "true"
   end
