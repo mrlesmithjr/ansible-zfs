@@ -8,7 +8,8 @@
 disk = './secondDisk.vdi'
 Vagrant.configure(2) do |config|
   config.vm.define "zfs" do |zfs|
-    zfs.vm.box = "ubuntu/trusty64"
+#    zfs.vm.box = "mrlesmithjr/jessie64"
+    zfs.vm.box = "mrlesmithjr/trusty64"
     zfs.vm.hostname = "zfs"
 
     zfs.vm.network :private_network, ip: "192.168.202.201"
@@ -19,12 +20,13 @@ Vagrant.configure(2) do |config|
       end
       vb.memory = "1024"
       vb.customize ['storageattach', :id,  '--storagectl', 'SATAController', '--port', 1, '--device', 0, '--type', 'hdd', '--medium', disk] #Ubuntu
-#      vb.customize ['storageattach', :id,  '--storagectl', 'SATA Controller', '--port', 1, '--device', 0, '--type', 'hdd', '--medium', disk] #Debian
+#      vb.customize ['storageattach', :id,  '--storagectl', 'SATA', '--port', 1, '--device', 0, '--type', 'hdd', '--medium', disk] #Debian
     end
     zfs.vm.provision :shell, path: "provision.sh", keep_color: "true"
   end
   config.vm.define "client" do |client|
-    client.vm.box = "ubuntu/trusty64"
+#    client.vm.box = "mrlesmithjr/jessie64"
+    client.vm.box = "mrlesmithjr/trusty64"
     client.vm.hostname = "client"
 
     client.vm.network :private_network, ip: "192.168.202.202"
