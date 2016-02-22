@@ -20,6 +20,12 @@
   apt:
     deb: "/opt/{{ zfs_debian_package }}"
     state: present
+  register: zfs_package_installed
+
+- name: debian | updating apt-cache
+  apt:
+    update_cache: true
+  when: zfs_package_installed.changed
 
 - name: debian | installing zfs
   apt:
