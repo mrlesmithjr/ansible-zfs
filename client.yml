@@ -5,8 +5,14 @@
     - iscsi_mount_on_boot: true
     - iscsi_portal: 192.168.202.201
     - iscsi_targets:
-        - 'iqn.2001-04.local.vagrant:storage.backups'
-        - 'iqn.2001-04.local.vagrant:storage.data'
+        - target: 'iqn.2001-04.local.vagrant:storage.backups'
+          dev: '/dev/sdb'
+          fstype: 'ext4'
+          mountpoint: '/mnt/backups'
+        - target: 'iqn.2001-04.local.vagrant:storage.data'
+          dev: '/dev/sdc'
+          fstype: 'ext4'
+          mountpoint: '/mnt/data'
   roles:
   tasks:
     - name: ensuring open-iscsi is installed
@@ -19,6 +25,21 @@
         portal: "{{ iscsi_portal }}"
         login: yes
         discover: yes
-        target: "{{ item }}"
+        target: "{{ item.target }}"
         auto_node_startup: "{{ iscsi_mount_on_boot }}"
+      changed_when: false
+      with_items: iscsi_targets
+
+    - name: partitioning iscsi luns
+      filesystem:
+        fstype: "{{ item.fstype }}"
+        dev: "{{ item.dev }}"
+      with_items: iscsi_targets
+
+    - name: mounting iscsi luns
+      mount:
+        name: "{{ item.mountpoint }}"
+        src: "{{ item.dev }}"
+        fstype: "{{ item.fstype }}"
+        state: mounted
       with_items: iscsi_targets
