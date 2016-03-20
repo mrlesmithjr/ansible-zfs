@@ -13,7 +13,9 @@
       - name: tank
     #    atime: 'on'
         compression: 'lz4'  # on | off (default) | lzjb | gzip | gzip-1 | gzip-2 | gzip-3 | gzip-4 | gzip-5 | gzip-6 | gzip-7 | gzip-8 | gzip-9 | lz4 | zle
-        devices: '/dev/sdb /dev/sdc'  #define devices to create pool with...can define multiple by | sdb sdc sdd sde sdf | all on one line w/spaces
+        devices:  #define devices to create pool with...can define multiple by | sdb sdc sdd sde sdf | all on one line w/spaces
+          - '/dev/sdb'
+          - '/dev/sdc'
         type: mirror  #define pool type... | basic (no-raid) | mirror | raidz | raidz2 | raidz3
         state: present
   roles:
