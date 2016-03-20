@@ -89,16 +89,18 @@ zfs_performance_tuning:
   - param: 'zfs_txg_timeout'
     value: '5'
   - param: 'zfs_arc_max'
-    value: '{{ (ansible_memtotal_mb | int * 0.5) | round | int }}'  # 1/2 total system memory
+    value: '{{ (ansible_memtotal_mb | int * 1024 * 1024 * 0.5) | round | int }}'  # 1/2 total system memory
   - param: 'zfs_arc_meta_limit'
-    value: '{{ (ansible_memtotal_mb | int * 0.125) | round | int }}'  # 1/4 zfs_arc_max
+    value: '{{ (ansible_memtotal_mb | int * 1024 * 1024 * 0.125) | round | int }}'  # 1/4 zfs_arc_max
   - param: 'zfs_arc_min'
-    value: '{{ (ansible_memtotal_mb | int * 0.0625) | round | int }}'  # 1/2 zfs_arc_meta_limit
+    value: '{{ (ansible_memtotal_mb | int * 1024 * 1024 * 0.0625) | round | int }}'  # 1/2 zfs_arc_meta_limit
 zfs_pools:  #defines zpool(s) to manage
   - name: tank
 #    atime: 'on'
     compression: 'lz4'  # on | off (default) | lzjb | gzip | gzip-1 | gzip-2 | gzip-3 | gzip-4 | gzip-5 | gzip-6 | gzip-7 | gzip-8 | gzip-9 | lz4 | zle
-    devices: '/dev/sdb'  #define devices to create pool with...can define multiple by | sdb sdc sdd sde sdf | all on one line w/spaces
+    devices:  #define devices to create pool with...can define multiple by | sdb sdc sdd sde sdf | all on one line w/spaces
+      - '/dev/sdb'
+      - '/dev/sdc'
     type: basic  #define pool type... | basic (no-raid) | mirror | raidz | raidz2 | raidz3
     state: present
 zfs_ubuntu_ppa: 'ppa:zfs-native/stable'
