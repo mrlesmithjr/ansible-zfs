@@ -62,6 +62,8 @@
     sync: "{{ item.sync|default(omit) }}"
     logbias: "{{ item.logbias|default(omit) }}"
     volsize: "{{ item.volsize|default(omit) }}"
+  notify:
+    - restart iscsitarget
   with_items: '{{ zfs_volumes }}'
 
 - name: manage_zfs | configuring iscsi devices
