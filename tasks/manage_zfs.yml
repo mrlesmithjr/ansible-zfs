@@ -43,13 +43,14 @@
     atime: "{{ item.atime|default(omit) }}"
     compression: "{{ item.compression|default(omit) }}"
     dedup: "{{ item.dedup|default(omit) }}"
-    quota: "{{ item.quota|default(omit) }}"
+    logbias: "{{ item.logbias|default(omit) }}"
+    mountpoint: "{{ item.mountpoint|default(omit) }}"
     primarycache: "{{ item.primarycache|default(omit) }}"
+    quota: "{{ item.quota|default(omit) }}"
     recordsize: "{{ item.recordsize|default(omit) }}"
     sharenfs: "{{ item.sharenfs|default(omit) }}"
     state: "{{ item.state }}"
     sync: "{{ item.sync|default(omit) }}"
-    logbias: "{{ item.logbias|default(omit) }}"
   with_items: '{{ zfs_filesystems }}'
   when: create_zfs_filesystems
 
