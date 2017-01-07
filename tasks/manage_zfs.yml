@@ -17,7 +17,7 @@
   with_items: '{{ zfs_pools }}'
   when: >
         zfs_pools is defined and
-        create_zfs_pools and
+        zfs_create_pools and
         (item.type == "basic" and
         item.name not in zpools.stdout and
         item.state == "present") and
@@ -29,7 +29,7 @@
   with_items: '{{ zfs_pools }}'
   when: >
         zfs_pools is defined and
-        create_zfs_pools and
+        zfs_create_pools and
         (item.type == "basic" and
         item.state == "present") and
         item.devices[0] not in zpool_devices.stdout and
@@ -42,7 +42,7 @@
   register: "zpool_created"
   when: >
         zfs_pools is defined and
-        create_zfs_pools and
+        zfs_create_pools and
         (item.type != "basic" and
         item.name not in zpools.stdout and
         item.state == "present") and
@@ -54,7 +54,7 @@
   with_items: '{{ zfs_pools }}'
   when: >
         zfs_pools is defined and
-        create_zfs_pools and
+        zfs_create_pools and
         (item.type != "basic" and
         item.state == "present") and
         item.devices[0] not in zpool_devices.stdout and
@@ -74,7 +74,7 @@
     state: "{{ item.state }}"
     sync: "{{ item.sync|default(omit) }}"
   with_items: '{{ zfs_pools }}'
-  when: create_zfs_pools
+  when: zfs_create_pools
 
 - name: manage_zfs | managing filesystems
   zfs:
@@ -91,7 +91,7 @@
     state: "{{ item.state }}"
     sync: "{{ item.sync|default(omit) }}"
   with_items: '{{ zfs_filesystems }}'
-  when: create_zfs_filesystems
+  when: zfs_create_filesystems
 
 - name: manage_zfs | managing volumes
   zfs:
@@ -109,7 +109,7 @@
   notify:
     - restart iscsitarget
   with_items: '{{ zfs_volumes }}'
-  when: create_zfs_volumes
+  when: zfs_create_volumes
 
 - name: manage_zfs | Setting ZFS Filesystem Permissions
   file:

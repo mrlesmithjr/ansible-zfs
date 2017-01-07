@@ -56,13 +56,14 @@ Role Variables
 ```
 ---
 # defaults file for ansible-zfs
-create_zfs_pools: false  #defines if ZFS pool(s) are created
-create_zfs_filesystems: false  #defines if ZFS filesystem(s) are created
-create_zfs_volumes: false  #defines if ZFS volumes(s) are created
-zfs_debian_package: 'zfsonlinux_{{ zfs_debian_package_version }}_all.deb'
+zfs_create_filesystems: false  #defines if ZFS filesystem(s) are created
+zfs_create_pools: false  #defines if ZFS pool(s) are created
+zfs_create_volumes: false  #defines if ZFS volumes(s) are created
 zfs_debian_package_key: 'http://zfsonlinux.org/4D5843EA.asc'
 zfs_debian_package_url: 'http://archive.zfsonlinux.org/debian/pool/main/z/zfsonlinux'
 zfs_debian_package_version: 6
+zfs_debian_package: 'zfsonlinux_{{ zfs_debian_package_version }}_all.deb'
+zfs_enable_auto_snapshots: true
 zfs_enable_iscsi: false  #defines if iscsitarget is installed to server iSCSI volumes
 zfs_enable_nfs: false  #defines if NFS Kernel Server should be installed to serve NFS
 zfs_enable_performance_tuning: false  #defines if paramaters defined in zfs_performance_tuning are applied
