@@ -3,7 +3,7 @@
   apt:
     name: "samba"
     state: "present"
-  when: ansible_distribution == "Debian"
+  when: ansible_os_family == "Debian"
 
 - name: samba | Configuring Samba
   template:
