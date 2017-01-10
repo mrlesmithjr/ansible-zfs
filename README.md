@@ -108,6 +108,7 @@ zfs_iscsitarget_target_portals:
   - ALL  #define IP address to listen for iSCSI connections | ALL (default) | cidr (x.x.x.x/xx) | disable ALL if defining cidr
 #  - 10.0.2.0/24
 #  - 192.168.2.0/24
+zfs_manage_filesystem_permissions: false # Defines if ZFS Filesystem mountpoint permissions are managed
 zfs_performance_tuning:
   - param: 'zfs_prefetch_disable'
     value: '1'
