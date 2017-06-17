@@ -129,6 +129,9 @@ zfs_pools:  #defines zpool(s) to manage
       - 'ata-INTEL_SSDSC2BW240A4_CVDA352100YL2403GN'
       - 'ata-INTEL_SSDSC2BW240A4_BTDA329505KM2403GN'
     type: 'mirror'  #define pool type... | basic (no-raid) | mirror | raidz | raidz2 | raidz3
+    options:  # any options the zpool command accepts
+      - '-f'
+      - '-L'
     state: 'present'
   - name: 'SSD-TANK'
     action: 'add'
@@ -138,6 +141,8 @@ zfs_pools:  #defines zpool(s) to manage
       - 'ata-INTEL_SSDSC2BW240A4_CVDA352100GP2403GN'
       - 'ata-INTEL_SSDSC2BW240A4_CVDA401000Q02403GN'
     type: 'mirror'  #define pool type... | basic (no-raid) | mirror | raidz | raidz2 | raidz3
+    options:  # any options the zpool command accepts
+      - '-f'
     state: 'present'
   - name: 'SSD-TANK'
     action: 'add'
