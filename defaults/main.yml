@@ -74,6 +74,10 @@ zfs_pools:  #defines zpool(s) to manage
       - 'ata-INTEL_SSDSC2BW240A4_BTDA329505KM2403GN'
     type: 'mirror'  #define pool type... | basic (no-raid) | mirror | raidz | raidz2 | raidz3
     state: 'present'
+    scrub_cron:  # override global scrub cron job parameters per zpool
+      # enable: False  # disable scrub cron job creation for this specific zpool
+      hour: '2'
+      weekday: 'sat'
   - name: 'SSD-TANK'
     action: 'add'
 #    atime: 'on'
@@ -92,6 +96,12 @@ zfs_pools:  #defines zpool(s) to manage
       - 'ata-INTEL_SSDSC2BW240A4_BTDA329501102403GN'
     type: 'mirror'  #define pool type... | basic (no-raid) | mirror | raidz | raidz2 | raidz3
     state: 'present'
+zfs_pools_scrub_cron:  # defines global scrub cron job parameters. Only applies when `zfs_enable_monitoring` is set to True.
+  minute: '0'
+  hour: '0'
+  day: '*'
+  month: '*'
+  weekday: 'sun'
 zfs_ubuntu_ppa: 'ppa:zfs-native/stable'
 zfs_volumes:  #defines block-device volumes to manage
   - name: 'backups'
@@ -111,3 +121,7 @@ zfs_volumes:  #defines block-device volumes to manage
 #      - 10.0.0.0/8
       - 192.168.202.0/24
     state: 'present'
+zfs_enable_monitoring: False
+zfs_monitoring_capacity_threshold: 80  # in percentage.
+zfs_monitoring_scrub_max_age: 8  # in days.
+zfs_monitoring_email_dest: root@localhost
