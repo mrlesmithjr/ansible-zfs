@@ -9,7 +9,7 @@
     day: "{{ (item.scrub_cron | default(zfs_pools_scrub_cron)).day | default(zfs_pools_scrub_cron.day) }}"
     month: "{{ (item.scrub_cron | default(zfs_pools_scrub_cron)).month | default(zfs_pools_scrub_cron.month) }}"
     weekday: "{{ (item.scrub_cron | default(zfs_pools_scrub_cron)).weekday | default(zfs_pools_scrub_cron.weekday) }}"
-    job: "zpool scrub {{ item.name }}"
+    job: "/sbin/zpool scrub {{ item.name }}"
   with_items: "{{ zfs_pools }}"
   when: >-
     item.scrub_cron is not defined or
