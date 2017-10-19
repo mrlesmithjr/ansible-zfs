@@ -141,8 +141,8 @@ zfs_pools: []
 zfs_pools_scrub_cron:
   minute: 0
   hour: 0
-  day: *
-  month: *
+  day: "*"
+  month: "*"
   weekday: sun
 zfs_ubuntu_ppa: ppa:zfs-native/stable
 
