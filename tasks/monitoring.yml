@@ -23,12 +23,12 @@
     dest: /etc/cron.d/zfsutils-linux
     state: absent
   when: >-
-    {{ (zfs_pools
-          | selectattr('scrub_cron', 'defined')
-          | selectattr('scrub_cron.enable', 'defined')
-          | selectattr('scrub_cron.enable', 'equalto', False)
-          | list | length)
-        < (zfs_pools | length) }}
+    (zfs_pools
+      | selectattr('scrub_cron', 'defined')
+      | selectattr('scrub_cron.enable', 'defined')
+      | selectattr('scrub_cron.enable', 'equalto', False)
+      | list | length)
+    < (zfs_pools | length)
 
 - name: monitoring | configuring ZFS monitoring
   template:
