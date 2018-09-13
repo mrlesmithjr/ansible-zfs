@@ -1,11 +1,19 @@
 ---
+- name: debian | gather kernel version
+  command: "uname -r"
+  register: uname
+
+- set_fact:
+    kernel_version: "{{ uname.stdout }}"
+  register: kernel_version
+
 - name: debian | installing ZFS
   apt:
     pkg: "{{ item }}"
     state: present
     update_cache: yes
   with_items:
-     - linux-headers-amd64
+     - "linux-headers-{{ kernel_version }}"
      - zfs-dkms
      - zfsutils-linux
 
