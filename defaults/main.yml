@@ -1,6 +1,9 @@
 ---
 # defaults file for ansible-zfs
 
+# Install and setup ZFS on the host
+zfs_setup: true
+
 # Defines if ZFS filesystem(s) are created
 zfs_create_filesystems: false
 
