@@ -1,41 +1,29 @@
 ---
-- name: debian | installing pre-reqs
+- name: debian | gather kernel version
+  command: "uname -r"
+  register: uname
+
+- set_fact:
+    kernel_version: "{{ uname.stdout }}"
+  register: kernel_version
+
+- name: debian | installing ZFS
   apt:
-    name: "{{ item }}"
+    pkg: "{{ item }}"
     state: present
+    update_cache: yes
   with_items:
-    - lsb-release
-
-- name: debian | adding zfs repo key
-  apt_key:
-    url: "{{ zfs_debian_package_key }}"
-    state: present
-
-- name: debian | downloading zfs package
-  get_url:
-    url: "{{ zfs_debian_package_url }}/{{ zfs_debian_package }}"
-    dest: "/opt/{{ zfs_debian_package }}"
-
-- name: debian | installing zfs package
-  apt:
-    deb: "/opt/{{ zfs_debian_package }}"
-    state: present
-  register: zfs_package_installed
-
-- name: debian | updating apt-cache
-  apt:
-    update_cache: true
-  when: zfs_package_installed.changed
-
-- name: debian | installing zfs
-  apt:
-    name: debian-zfs
-    state: present
+     - "linux-headers-{{ kernel_version }}"
+     - zfs-dkms
+     - zfsutils-linux
 
 - name: debian | enabling zfs module
   modprobe:
     name: zfs
     state: present
+
+# Note: iscsitarget needs refactoring for working on debian 9
+# https://www.hiroom2.com/2017/07/11/debian-9-tgt-en/
 
 - name: debian | installing iscsitarget (if enabled)
   apt:
