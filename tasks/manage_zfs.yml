@@ -81,6 +81,7 @@
 - name: manage_zfs | managing filesystems
   zfs:
     name: "{{ item.pool }}/{{ item.name }}"
+    origin: "{{ item.origin |default(omit) }}"
     atime: "{{ item.atime|default(omit) }}"
     compression: "{{ item.compression|default(omit) }}"
     dedup: "{{ item.dedup|default(omit) }}"

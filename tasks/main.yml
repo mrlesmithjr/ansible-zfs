@@ -1,10 +1,10 @@
 ---
 # tasks file for ansible-zfs
 - include: debian.yml
-  when: ansible_distribution == "Debian"
+  when: ansible_distribution == "Debian" and zfs_setup == "true"
 
 - include: ubuntu.yml
-  when: ansible_distribution == "Ubuntu"
+  when: ansible_distribution == "Ubuntu" and zfs_setup == "true"
 
 - include: manage_zfs.yml
 

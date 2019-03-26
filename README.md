@@ -85,10 +85,6 @@ zfs_create_pools: false
 
 # Defines if ZFS volumes(s) are created
 zfs_create_volumes: false
-zfs_debian_package_key: http://zfsonlinux.org/4D5843EA.asc
-zfs_debian_package_url: http://archive.zfsonlinux.org/debian/pool/main/z/zfsonlinux
-zfs_debian_package_version: 6
-zfs_debian_package: "zfsonlinux_{{ zfs_debian_package_version }}_all.deb"
 zfs_enable_auto_snapshots: true
 
 # Defines if iscsitarget is installed to server iSCSI volumes
@@ -400,3 +396,8 @@ Larry Smith Jr.
 -   @mrlesmithjr
 -   <http://everythingshouldbevirtual.com>
 -   mrlesmithjr [at] gmail.com
+
+Gualter Barbas Baptista
+
+-   @gandhiano
+-   gb [at] braincraft.de
