@@ -1,10 +1,9 @@
 ---
 - name: debian | installing pre-reqs
   apt:
-    name: "{{ item }}"
+    name:
+      - lsb-release
     state: present
-  with_items:
-    - lsb-release
 
 - name: debian | adding zfs repo key
   apt_key:
@@ -39,22 +38,20 @@
 
 - name: debian | installing iscsitarget (if enabled)
   apt:
-    name: "{{ item }}"
+    name:
+      - iscsitarget
+      - iscsitarget-dkms
     state: present
-  with_items:
-    - iscsitarget
-    - iscsitarget-dkms
   when: >
         zfs_enable_iscsi is defined and
         zfs_enable_iscsi
 
 - name: debian | un-installing iscsitarget (if not enabled)
   apt:
-    name: "{{ item }}"
+    name:
+      - iscsitarget
+      - iscsitarget-dkms
     state: absent
-  with_items:
-    - iscsitarget
-    - iscsitarget-dkms
   when: >
         zfs_enable_iscsi is defined and
         not zfs_enable_iscsi

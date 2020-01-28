@@ -66,50 +66,53 @@
 - name: manage_zfs | managing pools
   zfs:
     name: "{{ item.name }}"
-    atime: "{{ item.atime|default(omit) }}"
-    compression: "{{ item.compression|default(omit) }}"
-    dedup: "{{ item.dedup|default(omit) }}"
-    primarycache: "{{ item.primarycache|default(omit) }}"
-    quota: "{{ item.quota|default(omit) }}"
-    recordsize: "{{ item.recordsize|default(omit) }}"
-    sharenfs: "{{ item.sharenfs|default(omit) }}"
+    extra_zfs_properties:
+      atime: "{{ item.atime|default(omit) }}"
+      compression: "{{ item.compression|default(omit) }}"
+      dedup: "{{ item.dedup|default(omit) }}"
+      primarycache: "{{ item.primarycache|default(omit) }}"
+      quota: "{{ item.quota|default(omit) }}"
+      recordsize: "{{ item.recordsize|default(omit) }}"
+      sharenfs: "{{ item.sharenfs|default(omit) }}"
+      sync: "{{ item.sync|default(omit) }}"
     state: "{{ item.state }}"
-    sync: "{{ item.sync|default(omit) }}"
   with_items: "{{ zfs_pools }}"
   when: zfs_create_pools
 
 - name: manage_zfs | managing filesystems
   zfs:
     name: "{{ item.pool }}/{{ item.name }}"
-    atime: "{{ item.atime|default(omit) }}"
-    compression: "{{ item.compression|default(omit) }}"
-    dedup: "{{ item.dedup|default(omit) }}"
-    logbias: "{{ item.logbias|default(omit) }}"
-    mountpoint: "{{ item.mountpoint|default(omit) }}"
-    primarycache: "{{ item.primarycache|default(omit) }}"
-    quota: "{{ item.quota|default(omit) }}"
-    recordsize: "{{ item.recordsize|default(omit) }}"
-    sharenfs: "{{ item.sharenfs|default(omit) }}"
+    extra_zfs_properties:
+      atime: "{{ item.atime|default(omit) }}"
+      compression: "{{ item.compression|default(omit) }}"
+      dedup: "{{ item.dedup|default(omit) }}"
+      logbias: "{{ item.logbias|default(omit) }}"
+      mountpoint: "{{ item.mountpoint|default(omit) }}"
+      primarycache: "{{ item.primarycache|default(omit) }}"
+      quota: "{{ item.quota|default(omit) }}"
+      recordsize: "{{ item.recordsize|default(omit) }}"
+      sharenfs: "{{ item.sharenfs|default(omit) }}"
+      sync: "{{ item.sync|default(omit) }}"
+      snapdev: "{{ item.snapdev|default('hidden')}}"
+      snapdir: "{{ item.snapdir|default('hidden')}}"
     state: "{{ item.state }}"
-    sync: "{{ item.sync|default(omit) }}"
-    snapdev: "{{ item.snapdev|default('hidden')}}"
-    snapdir: "{{ item.snapdir|default('hidden')}}"
   with_items: "{{ zfs_filesystems }}"
   when: zfs_create_filesystems
 
 - name: manage_zfs | managing volumes
   zfs:
     name: "{{ item.pool }}/{{ item.name }}"
-    compression: "{{ item.compression|default(omit) }}"
-    dedup: "{{ item.dedup|default(omit) }}"
-    quota: "{{ item.quota|default(omit) }}"
-    primarycache: "{{ item.primarycache|default(omit) }}"
-    recordsize: "{{ item.recordsize|default(omit) }}"
-#    shareiscsi: "{{ item.shareiscsi|default(omit) }}"
+    extra_zfs_properties:
+      compression: "{{ item.compression|default(omit) }}"
+      dedup: "{{ item.dedup|default(omit) }}"
+      quota: "{{ item.quota|default(omit) }}"
+      primarycache: "{{ item.primarycache|default(omit) }}"
+      recordsize: "{{ item.recordsize|default(omit) }}"
+  #    shareiscsi: "{{ item.shareiscsi|default(omit) }}"
+      sync: "{{ item.sync|default(omit) }}"
+      logbias: "{{ item.logbias|default(omit) }}"
+      volsize: "{{ item.volsize|default(omit) }}"
     state: "{{ item.state }}"
-    sync: "{{ item.sync|default(omit) }}"
-    logbias: "{{ item.logbias|default(omit) }}"
-    volsize: "{{ item.volsize|default(omit) }}"
   notify:
     - restart iscsitarget
   with_items: "{{ zfs_volumes }}"
