@@ -105,11 +105,20 @@
   notify:
     - start zfs-share
 
+- name: ubuntu | Checking for ZFS-Auto-Snapshot package from the distribution
+  command: apt-cache show zfs-auto-snapshot
+  ignore_errors: true
+  register: auto_snapshot
+  when: zfs_enable_auto_snapshots
+
 - name: ubuntu | Adding ZFS-Auto-Snapshot Repo
   apt_repository:
     repo: ppa:bob-ziuchkovski/zfs-auto-snapshot
     state: present
-  when: zfs_enable_auto_snapshots
+  when: >
+    zfs_enable_auto_snapshots and
+    auto_snapshot.rc != 0 and
+    auto_snapshot.stderr == 'E: No packages found'
 
 - name: ubuntu | Installing ZFS-Auto-Snapshot
   apt:
