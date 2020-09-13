@@ -110,6 +110,9 @@
   ignore_errors: true
   register: auto_snapshot
   when: zfs_enable_auto_snapshots
+  changed_when: false
+  failed_when: false
+  check_mode: false
 
 - name: ubuntu | Adding ZFS-Auto-Snapshot Repo
   apt_repository:
@@ -117,7 +120,6 @@
     state: present
   when: >
     zfs_enable_auto_snapshots and
-    auto_snapshot.rc != 0 and
     auto_snapshot.stderr == 'E: No packages found'
 
 - name: ubuntu | Installing ZFS-Auto-Snapshot
