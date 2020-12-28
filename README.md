@@ -83,6 +83,9 @@ zfs_create_filesystems: false
 # Defines if ZFS pool(s) are created
 zfs_create_pools: false
 
+# Defines the default Ubuntu universe repo
+zfs_ubuntu_universe_repo_url: http://us.archive.ubuntu.com/ubuntu
+
 # Defines if ZFS volumes(s) are created
 zfs_create_volumes: false
 zfs_debian_package_key: http://zfsonlinux.org/4D5843EA.asc
