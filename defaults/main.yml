@@ -17,6 +17,10 @@ backports_internal_components: "main contrib non-free"
 backports_internal_additional_packages:
   - apt-transport-https
 
+# Install/Update zfs packates 
+# Set to false to avoid updates on runtime
+zfs_install_update: true
+
 # Defines if ZFS volumes(s) are created
 zfs_create_volumes: false
 zfs_debian_package_key: http://zfsonlinux.org/4D5843EA.asc
