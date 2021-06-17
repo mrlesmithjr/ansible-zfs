@@ -1,10 +1,15 @@
 ---
 # tasks file for ansible-zfs
+
+- set_fact:
+    zfs_install_update: true
+  when: zfs_install_update is undefined
+
 - include: debian.yml
-  when: ansible_distribution == "Debian"
+  when: ansible_distribution == "Debian" and zfs_install_update == true
 
 - include: ubuntu.yml
-  when: ansible_distribution == "Ubuntu"
+  when: ansible_distribution == "Ubuntu" and zfs_install_update == true
 
 - include: manage_zfs.yml
 
