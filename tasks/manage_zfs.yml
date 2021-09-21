@@ -34,7 +34,7 @@
         zfs_create_pools and
         (item.type == "basic" and
         item.state == "present") and
-        item.devices[0] not in zpool_devices.stdout and
+        (item.devices[0]|basename) not in zpool_devices.stdout and
         item.action|lower == "add" and
         (zpool_created.changed or item.name in zpools.stdout)
 
@@ -59,7 +59,7 @@
         zfs_create_pools and
         (item.type != "basic" and
         item.state == "present") and
-        item.devices[0] not in zpool_devices.stdout and
+        (item.devices[0]|basename) not in zpool_devices.stdout and
         item.action|lower == "add" and
         (zpool_created.changed or item.name in zpools.stdout)
 
