@@ -42,6 +42,9 @@
   create mask = {{ item.smb_options.create_mask|default('0744') }}
   guest ok = {{ item.smb_options.guest_ok|default('no') }}
   path = {{ item.mountpoint }}
+  {% if item.valid_users is defined %}
+  valid users= {{ item.valid_users }}
+  {% endif %}
   read only = {{ item.smb_options.read_only|default('yes') }}
   writable = {{ item.smb_options.writable|default('no') }}
 {%   endif %}
