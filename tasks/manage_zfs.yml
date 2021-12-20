@@ -13,8 +13,13 @@
   check_mode: no
   when: zfs_pools is defined
 
+# - name: manage_zfs | debug
+#   debug:
+#     msg: "zpool create {{ '-o '+ item.options.items() |map('join', '=') | join (' -o ') if item.options is defined else '' }} {{ item.name }} {{ item.devices|join (' ') }}"
+#   with_items: "{{ zfs_pools }}"
+
 - name: manage_zfs | creating basic zpool(s)
-  command: "zpool create {{ item.options | join (' ') if item.options is defined else '' }} {{ item.name }} {{ item.devices|join (' ') }}"
+  command: "zpool create {{ '-o '+ item.options.items() |map('join', '=') | join (' -o ') if item.options is defined else '' }} {{ item.name }} {{ item.devices|join (' ') }}"
   register: zpool_created
   with_items: "{{ zfs_pools }}"
   when: >
@@ -27,7 +32,7 @@
         item.action|lower == "create"
 
 - name: manage_zfs | adding basic zpool(s)
-  command: "zpool add {{ item.options | join (' ') if item.options is defined else '' }} {{ item.name }} {{ item.devices|join (' ') }}"
+  command: "zpool add {{ '-o '+ item.options.items() |map('join', '=') | join (' -o ') if item.options is defined else '' }} {{ item.name }} {{ item.devices|join (' ') }}"
   with_items: "{{ zfs_pools }}"
   when: >
         zfs_pools is defined and
@@ -39,7 +44,7 @@
         (zpool_created.changed or item.name in zpools.stdout)
 
 - name: manage_zfs | creating mirror/zraid zpool(s)
-  command: "zpool create {{ item.options | join (' ') if item.options is defined else '' }} {{ item.name }} {{ item.type }} {{ item.devices|join (' ') }}"
+  command: "zpool create {{ '-o '+ item.options.items() |map('join', '=') | join (' -o ') if item.options is defined else '' }} {{ item.name }} {{ item.type }} {{ item.devices|join (' ') }}"
   with_items: "{{ zfs_pools }}"
   register: zpool_created
   when: >
@@ -52,7 +57,7 @@
         item.action|lower == "create"
 
 - name: manage_zfs | adding mirror/zraid zpool(s)
-  command: "zpool add {{ item.options | join (' ') if item.options is defined else '' }} {{ item.name }} {{ item.type }} {{ item.devices|join (' ') }}"
+  command: "zpool add {{ '-o '+ item.options.items() |map('join', '=') | join (' -o ') if item.options is defined else '' }} {{ item.name }} {{ item.type }} {{ item.devices|join (' ') }}"
   with_items: "{{ zfs_pools }}"
   when: >
         zfs_pools is defined and
@@ -78,9 +83,6 @@
       recordsize: "{{ item.recordsize|default(omit) }}"
       sharenfs: "{{ item.sharenfs|default(omit) }}"
       aclinherit: "{{ item.aclinherit|default(omit) }}"
-      encryption: "{{ item.encryption|default(omit) }}"
-      keylocation: "{{ item.keylocation|default(omit) }}"
-      keyformat: "{{ item.keyformat|default(omit) }}"
       acltype: "{{ item.acltype|default(omit) }}"
       xattr: "{{ item.xattr|default(omit) }}"
       sync: "{{ item.sync|default(omit) }}"
