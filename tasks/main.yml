@@ -5,21 +5,21 @@
     zfs_install_update: true
   when: zfs_install_update is undefined
 
-- include: debian.yml
+- include_tasks: debian.yml
   when: ansible_distribution == "Debian" and zfs_install_update == true
 
-- include: ubuntu.yml
+- include_tasks: ubuntu.yml
   when: ansible_distribution == "Ubuntu" and zfs_install_update == true
 
-- include: manage_zfs.yml
+- include_tasks: manage_zfs.yml
 
-- include: samba.yml
+- include_tasks: samba.yml
   when: zfs_enable_samba
 
-- include: tune_zfs.yml
+- include_tasks: tune_zfs.yml
   when: >
         zfs_enable_performance_tuning is defined and
         zfs_enable_performance_tuning
 
-- include: monitoring.yml
+- include_tasks: monitoring.yml
   when: zfs_enable_monitoring
