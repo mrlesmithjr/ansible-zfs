@@ -147,6 +147,9 @@ zfs_filesystems: []
   #   #standard (default) | always | disabled
   #   sync: disabled
 
+# Defines if this role should manage the installation of ZFS, including updates.
+zfs_install_update: true
+
 # Defines if iscsitarget service is enabled
 zfs_iscsistarget_enable: "{{ zfs_enable_iscsi }}"
 
