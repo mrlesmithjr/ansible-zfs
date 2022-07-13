@@ -146,6 +146,15 @@ zfs_filesystems: []
   #   state: present
   #   #standard (default) | always | disabled
   #   sync: disabled
+  # - name: encrypted-fs
+  #   pool: tank
+  #   state: present
+  #   # The encryption algorithm to use, or just "on" to use the default one picked by ZFS.
+  #   encryption: aes-256-gcm
+  #   # Where to lookup the key on the filesystem.  Prompt is not supported by this role.
+  #   keylocation: "file:///use/local/etc/zfs/keys/tank/encyrpted-fs"
+  #   # passphrase | hex | raw
+  #   keyformat: "hex"
 
 # Defines if this role should manage the installation of ZFS, including updates.
 zfs_install_update: true
@@ -250,6 +259,16 @@ zfs_volumes: []
   #     # - 10.0.0.0/8
   #     - 192.168.202.0/24
   #   state: present
+  # - name: encrypted-vol
+  #   pool: tank
+  #   state: present
+  #   # The encryption algorithm to use, or just "on" to use the default one picked by ZFS.
+  #   encryption: on
+  #   # Where to lookup the key on the filesystem.  Prompt is not supported by this role.
+  #   keylocation: "file:///use/local/etc/zfs/keys/tank/encyrpted-vol"
+  #   # passphrase | hex | raw
+  #   keyformat: "hex"
+  #   volsize: 3G
 
 zfs_enable_monitoring: False
 
