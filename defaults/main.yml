@@ -8,7 +8,7 @@ zfs_create_filesystems: false
 zfs_create_pools: false
 
 # Overwrite debian release
-# debian_release: 
+# debian_release:
 debian_use_backports: True
 
 # Defines Debian Backports Repo
@@ -17,7 +17,7 @@ backports_internal_components: "main contrib non-free"
 backports_internal_additional_packages:
   - apt-transport-https
 
-# Install/Update zfs packates 
+# Install/Update zfs packates
 # Set to false to avoid updates on runtime
 zfs_install_update: true
 
@@ -81,9 +81,12 @@ zfs_filesystems: []
   #     read_only: "no"
   #     share_name: Movies
   #     writable: "yes"
+  #   xattr: sa
+  #   acltype: posixacl
   #   state: present
   #   #standard (default) | always | disabled
   #   sync: disabled
+
 
 # Defines if iscsitarget service is enabled
 zfs_iscsistarget_enable: "{{ zfs_enable_iscsi }}"
@@ -153,6 +156,8 @@ zfs_pools: []
   #     - ata-INTEL_SSDSC2BW240A4_CVDA4010045B2403GN
   #     - ata-INTEL_SSDSC2BW240A4_BTDA329501102403GN
   #   type: mirror
+  #   xattr: sa
+  #   acltype: posixacl
   #   state: present
 
 # defines global scrub cron job parameters. Only applies when `zfs_enable_monitoring` is set to True.

@@ -67,6 +67,7 @@
   zfs:
     name: "{{ item.name }}"
     extra_zfs_properties:
+      acltype: "{{ item.acltype|default(omit) }}"
       atime: "{{ item.atime|default(omit) }}"
       compression: "{{ item.compression|default(omit) }}"
       dedup: "{{ item.dedup|default(omit) }}"
@@ -79,6 +80,7 @@
       sync: "{{ item.sync|default(omit) }}"
       snapdev: "{{ item.snapdev|default('hidden')}}"
       snapdir: "{{ item.snapdir|default('hidden')}}"
+      xattr: "{{ item.xattr|default(omit) }}"
     state: "{{ item.state }}"
   with_items: "{{ zfs_pools }}"
   when: zfs_create_pools
@@ -87,6 +89,7 @@
   zfs:
     name: "{{ item.pool }}/{{ item.name }}"
     extra_zfs_properties:
+      acltype: "{{ item.acltype|default(omit) }}"
       atime: "{{ item.atime|default(omit) }}"
       compression: "{{ item.compression|default(omit) }}"
       dedup: "{{ item.dedup|default(omit) }}"
@@ -102,6 +105,7 @@
       snapdev: "{{ item.snapdev|default('hidden')}}"
       snapdir: "{{ item.snapdir|default('hidden')}}"
       sync: "{{ item.sync|default(omit) }}"
+      xattr: "{{ item.xattr|default(omit) }}"
     state: "{{ item.state }}"
   with_items: "{{ zfs_filesystems }}"
   when: zfs_create_filesystems

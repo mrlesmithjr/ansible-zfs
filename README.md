@@ -143,6 +143,8 @@ zfs_filesystems: []
   #     read_only: "no"
   #     share_name: Movies
   #     writable: "yes"
+  #   xattr: sa
+  #   acltype: posixacl
   #   state: present
   #   #standard (default) | always | disabled
   #   sync: disabled
@@ -227,6 +229,8 @@ zfs_pools: []
   #     - ata-INTEL_SSDSC2BW240A4_CVDA4010045B2403GN
   #     - ata-INTEL_SSDSC2BW240A4_BTDA329501102403GN
   #   type: mirror
+  #   xattr: sa
+  #   acltype: posixacl
   #   state: present
 
 # defines global scrub cron job parameters. Only applies when `zfs_enable_monitoring` is set to True.
