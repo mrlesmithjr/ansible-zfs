@@ -55,6 +55,7 @@ zfs_filesystems: []
   #   # all (default) | none | metadata
   #   primarycache: all
   #   quota: 3G
+  #   refquota: none
   #   # Defines recordsize.. 16K | 32K | 64K | 128K (default) | and etc.
   #   recordsize: 16K
   #   sharenfs: on
@@ -71,6 +72,7 @@ zfs_filesystems: []
   #   owner: nobody
   #   pool: TANK
   #   quota: none
+  #   refquota: 100G
   #   sharesmb: true
   #   smb_options:
   #     browseable: "yes"
