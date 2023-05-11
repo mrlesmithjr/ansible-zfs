@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "ansible-zfs"
+version = "0.1.0"
+description = ""
+authors = ["Larry Smith Jr. <mrlesmithjr@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.9"
+ansible = "6.6.0"
+
+
+[tool.poetry.group.dev.dependencies]
+yamllint = "^1.31.0"
+ansible-lint = { version = "^6.9.0", markers = "platform_system != 'Windows'" }
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
