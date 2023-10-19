@@ -11,7 +11,8 @@
 - include_tasks: ubuntu.yml
   when: ansible_distribution == "Ubuntu" and zfs_install_update == true
 
-- include_tasks: encryption_keys.yml
+- name: Encryption keys
+  include_tasks: encryption_keys.yml
   when: >
         (zfs_create_pools or
         zfs_create_filesystems) and
