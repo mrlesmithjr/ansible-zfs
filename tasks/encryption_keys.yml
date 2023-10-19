@@ -1,19 +1,15 @@
 ---
-- name: Encryption keys | Set default value for zfs_encrypted_pool_or_datasets
-  ansible.builtin.set_fact:
-    zfs_encrypted_pools: []
-    zfs_encrypted_datasets: []
-
 - name: Encryption keys | Get encrypted pools
   ansible.builtin.set_fact:
-    zfs_encrypted_pools: "{{ zfs_pools | selectattr('options', 'search', 'keylocation') | map(attribute='name') | list }}"
+    zfs_encrypted_pools: >-
+      {{ zfs_pools | selectattr('options', 'search', 'keylocation') | map(attribute='name') | list }}
   when: zfs_create_pools
 
 - name: Encryption keys | Get encrypted datasets
   ansible.builtin.set_fact:
-    zfs_encrypted_pools: >
-      "{{ zfs_filesystems | selectattr('keylocation', 'defined') | map('combine', {'combined_key': item.pool ~ '/' ~ item.name}) |
-      map(attribute='combined_key') | list }}"
+    zfs_encrypted_datasets: >-
+      {{ zfs_filesystems | selectattr('keylocation', 'defined') | map('combine', {'dataset_name': '{{ pool }}/{{name}}'})
+                         | map(attribute='dataset_name') | list }}
   when: zfs_create_filesystems
 
 - name: Encryption keys | Create key-load service unit file
