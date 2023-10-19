@@ -103,6 +103,9 @@ zfs_enable_performance_tuning: false
 # Defines if Samba is installed and configured
 zfs_enable_samba: false
 
+# Defines if keys for encrypted filesystems are loaded on boot
+zfs_autoload_encryption_keys: false
+
 # Defines filesystems to manage
 zfs_filesystems: []
   # - name: nfs
