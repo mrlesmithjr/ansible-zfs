@@ -1,0 +1,38 @@
+---
+- name: Encryption | Set default value for zfs_encrypted_pool_or_datasets
+  set_fact:
+    zfs_encrypted_pools: []
+    zfs_encrypted_datasets: []
+
+- name: Encryption | Get encrypted pools
+  set_fact:
+    zfs_encrypted_pools: "{{ zfs_pools | selectattr('options', 'search', 'keylocation') | map(attribute='name') | list }}"
+  when: zfs_create_pools
+
+- name: Encryption | Get encrypted datasets
+  set_fact:
+    zfs_encrypted_pools: "{{ zfs_filesystems | selectattr('keylocation', 'defined') | map('combine', {'combined_key': item.pool ~ '/' ~ item.name}) | map(attribute='combined_key') | list }}"
+  when: zfs_create_filesystems
+
+- name: Encryption | Create key-load service unit file
+  ansible.builtin.template:
+    src: etc/systemd/system/zfs-load-key@.service.j2
+    dest: /etc/systemd/system/zfs-load-key@.service
+    owner: root
+    group: root
+    mode: 0644
+  when: zfs_encrypted_pools or zfs_encrypted_datasets
+
+- name: Encryption | Activate key-load service for encrypted pools
+  ansible.builtin.systemd_service:
+    name: zfs-load-key@{{ item }}
+    enabled: true
+  loop: "{{ zfs_encrypted_pools }}"
+  when: zfs_create_pools
+
+- name: Encryption | Activate key-load service for encrypted datasets
+  ansible.builtin.systemd_service:
+    name: zfs-load-key@{{ item }}
+    enabled: true
+  loop: "{{ zfs_encrypted_datasets }}"
+  when: zfs_create_filesystems

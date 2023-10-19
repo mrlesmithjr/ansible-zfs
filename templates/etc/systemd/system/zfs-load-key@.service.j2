@@ -1,0 +1,16 @@
+[Unit]
+Description=Load encryption keys for zpool
+Documentation=man:zfs(8)
+DefaultDependencies=no
+After=systemd-udev-settle.service
+After=systemd-remount-fs.service
+After=zfs-import.target
+Before=zfs-mount.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/sbin/zfs load-key %i
+
+[Install]
+WantedBy=zfs-mount.service
