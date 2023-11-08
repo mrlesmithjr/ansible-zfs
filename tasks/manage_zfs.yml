@@ -14,7 +14,7 @@
   when: zfs_pools is defined
 
 - name: manage_zfs | creating basic zpool(s)
-  command: "zpool create {{ item.options | join (' ') if item.options is defined else '' }} {{ item.name }} {{ item.devices|join (' ') }}"
+  command: "zpool create {{ item.options | join (' ') if item.options is defined else '' }} {{ item.properties.keys() | map('regex_replace', '^', '-o ') | zip(item.properties.values()) | map('join', '=') | join(' ') if item.properties is defined else '' }} {{ item.name }} {{ item.devices|join (' ') }}"
   register: zpool_created
   with_items: "{{ zfs_pools }}"
   when: >
@@ -27,7 +27,7 @@
         item.action|lower == "create"
 
 - name: manage_zfs | adding basic zpool(s)
-  command: "zpool add {{ item.options | join (' ') if item.options is defined else '' }} {{ item.name }} {{ item.devices|join (' ') }}"
+  command: "zpool add {{ item.options | join (' ') if item.options is defined else '' }} {{ item.properties.keys() | map('regex_replace', '^', '-o ') | zip(item.properties.values()) | map('join', '=') | join(' ') if item.properties is defined else '' }} {{ item.name }} {{ item.devices|join (' ') }}"
   with_items: "{{ zfs_pools }}"
   when: >
         zfs_pools is defined and
@@ -39,7 +39,7 @@
         (zpool_created.changed or item.name in zpools.stdout)
 
 - name: manage_zfs | creating mirror/zraid zpool(s)
-  command: "zpool create {{ item.options | join (' ') if item.options is defined else '' }} {{ item.name }} {{ item.type }} {{ item.devices|join (' ') }}"
+  command: "zpool create {{ item.options | join (' ') if item.options is defined else '' }} {{ item.properties.keys() | map('regex_replace', '^', '-o ') | zip(item.properties.values()) | map('join', '=') | join(' ') if item.properties is defined else '' }} {{ item.name }} {{ item.type }} {{ item.devices|join (' ') }}"
   with_items: "{{ zfs_pools }}"
   register: zpool_created
   when: >
@@ -52,7 +52,7 @@
         item.action|lower == "create"
 
 - name: manage_zfs | adding mirror/zraid zpool(s)
-  command: "zpool add {{ item.options | join (' ') if item.options is defined else '' }} {{ item.name }} {{ item.type }} {{ item.devices|join (' ') }}"
+  command: "zpool add {{ item.options | join (' ') if item.options is defined else '' }} {{ item.properties.keys() | map('regex_replace', '^', '-o ') | zip(item.properties.values()) | map('join', '=') | join(' ') if item.properties is defined else '' }} {{ item.name }} {{ item.type }} {{ item.devices|join (' ') }}"
   with_items: "{{ zfs_pools }}"
   when: >
         zfs_pools is defined and
