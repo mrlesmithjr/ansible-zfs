@@ -63,7 +63,26 @@
         item.action|lower == "add" and
         (zpool_created.changed or item.name in zpools.stdout)
 
+- name: manage_zfs | gather pool properties
+  command: "zpool get -Hp -o value {{ item.1.key }} {{ item.0.key }}"
+  changed_when: false
+  with_subelements:
+    - "{{ dict(zfs_pools | selectattr('properties', 'defined') | map(attribute='name') | zip(zfs_pools | selectattr('properties', 'defined') | map(attribute='properties') | map('dict2items'))) | dict2items }}"
+    - value
+  register: zpool_properties
+  when: >
+        zfs_pools is defined and
+        zfs_create_pools
+
 - name: manage_zfs | managing pools
+  command: "zpool set {{ item.item.1.key }}={{ item.item.1.value }} {{ item.item.0.key }}"
+  with_items: "{{ zpool_properties.results }}"
+  when: >
+        zfs_pools is defined and
+        zfs_create_pools and
+        item.stdout != (item.item.1.value | string)
+
+- name: manage_zfs | managing pools default filesystem
   zfs:
     name: "{{ item.name }}"
     extra_zfs_properties:
