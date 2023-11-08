@@ -209,6 +209,9 @@ zfs_pools: []
   #     - ata-INTEL_SSDSC2BW240A4_BTDA329505KM2403GN
   #   # Define pool type... | basic (no-raid) | mirror | raidz | raidz2 | raidz3
   #   type: mirror
+  #   properties:
+  #     ashift: 13
+  #     autoexpand: 'on'
   #   state: present
   #   # override global scrub cron job parameters per zpool
   #   scrub_cron:
