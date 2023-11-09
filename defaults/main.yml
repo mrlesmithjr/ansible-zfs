@@ -7,6 +7,9 @@ zfs_create_filesystems: false
 # Defines if ZFS pool(s) are created
 zfs_create_pools: false
 
+# Defines if ZFS pool(s) are imported if pre-existing
+zfs_import_pools: false
+
 # Overwrite debian release
 # debian_release:
 debian_use_backports: True

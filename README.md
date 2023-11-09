@@ -83,6 +83,9 @@ zfs_create_filesystems: false
 # Defines if ZFS pool(s) are created
 zfs_create_pools: false
 
+# Defines if ZFS pool(s) are imported if pre-existing
+zfs_import_pools: false
+
 # Defines if ZFS volumes(s) are created
 zfs_create_volumes: false
 zfs_debian_package_key: http://zfsonlinux.org/4D5843EA.asc
@@ -200,6 +203,7 @@ zfs_performance_tuning:
 zfs_pools: []
   # - name: SSD-TANK
   #   action: create
+  #   import: force
   #   # atime: on
   #   # on | off (default) | lzjb | gzip | gzip-1 | gzip-2 | gzip-3 | gzip-4 | gzip-5 | gzip-6 | gzip-7 | gzip-8 | gzip-9 | lz4 | zle
   #   compression: lz4

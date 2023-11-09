@@ -13,6 +13,48 @@
   check_mode: no
   when: zfs_pools is defined
 
+- name: manage zfs | checking for unimported zpools
+  shell: "zpool import | grep pool: | awk '{print $2}'"
+  changed_when: false
+  register: zpool_imports
+  check_mode: no
+  when: >
+        zfs_pools is defined and
+        zfs_import_pools
+
+- name: manage zfs | importing zpools
+  command: "zpool import {{ '-f' if item.import == 'force' else '' }} {{ item.name }}"
+  register: zpool_imported
+  with_items: "{{ zfs_pools }}"
+  when: >
+        zfs_pools is defined and
+        zfs_import_pools and
+        item.name not in zpools.stdout and
+        item.name in zpool_imports.stdout and
+        item.state == "present" and
+        item.devices[0] not in zpool_devices.stdout and
+        (item.action|lower == "import" or (item.action|lower == "create" and item.import))
+
+- name: manage zfs | refreshing existing zpool(s)
+  shell: "zpool list | awk 'FNR >1' | awk '{print $1}'"
+  changed_when: false
+  register: zpools
+  check_mode: no
+  when: >
+        zfs_pools is defined and
+        zfs_import_pools and
+        (zpool_imported.results | selectattr('changed') | map(attribute='changed') | length) > 0
+
+- name: manage_zfs | Refreshing ZPool Status
+  shell: zpool status
+  changed_when: false
+  register: zpool_devices
+  check_mode: no
+  when: >
+        zfs_pools is defined and
+        zfs_import_pools and
+        (zpool_imported.results | selectattr('changed') | map(attribute='changed') | length) > 0
+
 - name: manage_zfs | creating basic zpool(s)
   command: "zpool create {{ item.options | join (' ') if item.options is defined else '' }} {{ item.name }} {{ item.devices|join (' ') }}"
   register: zpool_created
