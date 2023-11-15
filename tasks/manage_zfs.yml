@@ -142,7 +142,9 @@
     owner: "{{ item.owner|default(omit) }}"
     group: "{{ item.group|default(omit) }}"
   with_items: "{{ zfs_filesystems }}"
-  when: zfs_manage_filesystem_permissions
+  when: >
+        zfs_manage_filesystem_permissions and
+        item.mountpoint is defined
 
 - name: manage_zfs | configuring iscsi devices
   template:
