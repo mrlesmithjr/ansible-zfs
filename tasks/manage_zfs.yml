@@ -135,16 +135,37 @@
   with_items: "{{ zfs_volumes }}"
   when: zfs_create_volumes
 
-- name: manage_zfs | Setting ZFS Filesystem Permissions
-  file:
-    path: "{{ item.mountpoint }}"
-    mode: "{{ item.mode|default(omit) }}"
-    owner: "{{ item.owner|default(omit) }}"
-    group: "{{ item.group|default(omit) }}"
-  with_items: "{{ zfs_filesystems }}"
-  when: >
-        zfs_manage_filesystem_permissions and
-        item.mountpoint is defined
+- name: manage_zfs | setting ZFS filesystem permissions
+  block:
+    - name: manage_zfs | setting explicit mount ZFS filesystem permissions
+      file:
+        path: "{{ item.mountpoint }}"
+        mode: "{{ item.mode|default(omit) }}"
+        owner: "{{ item.owner|default(omit) }}"
+        group: "{{ item.group|default(omit) }}"
+      with_items: "{{ zfs_filesystems }}"
+      when: item.mountpoint is defined
+    - name: manage_zfs | fetching inherited ZFS filesystem mounts
+      shell: "zfs get -Hp -o value mountpoint {{ item.pool }}/{{ item.name }}"
+      changed_when: false
+      register: zfs_filesystem_mounts
+      with_items: "{{ zfs_filesystems }}"
+      when: item.mountpoint is not defined
+    - name: manage_zfs | setting inherited mount ZFS filesystem permissions
+      file:
+        path: "{{ item.stdout }}"
+        mode: "{{ item.item.mode|default(omit) }}"
+        owner: "{{ item.item.owner|default(omit) }}"
+        group: "{{ item.item.group|default(omit) }}"
+      with_items:
+        - "{{ zfs_filesystem_mounts.results }}"
+      loop_control:
+        label: "{{ item.item }}"
+      when: >
+            zfs_filesystem_mounts and
+            item.stdout is defined and
+            item.stdout
+  when: zfs_manage_filesystem_permissions
 
 - name: manage_zfs | configuring iscsi devices
   template:
