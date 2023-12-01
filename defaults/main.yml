@@ -11,6 +11,9 @@ zfs_create_pools: false
 # debian_release:
 debian_use_backports: True
 
+# Defines Ubuntu Repo
+ubuntu_apt_repository: http://us.archive.ubuntu.com/ubuntu
+
 # Defines Debian Backports Repo
 backports_internal_uri: https://deb.debian.org/debian
 backports_internal_components: "main contrib non-free"

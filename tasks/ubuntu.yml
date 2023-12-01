@@ -15,7 +15,7 @@
 
 - name: ubuntu | ensuring Ubuntu universe repo is enabled ({{ ansible_distribution_version }} >= 16.04)
   apt_repository:
-    repo: "deb http://us.archive.ubuntu.com/ubuntu {{ ansible_distribution_release|lower }} universe"
+    repo: "deb {{ ubuntu_apt_repository }} {{ ansible_distribution_release|lower }} universe"
     state: present
   when: >
         ansible_distribution_version >= '16.04'
