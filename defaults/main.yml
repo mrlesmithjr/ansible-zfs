@@ -46,6 +46,7 @@ zfs_enable_samba: false
 
 # Defines if keys for encrypted filesystems are loaded on boot
 zfs_autoload_encryption_keys: false
+zfs_autoload_encryption_script_path: /etc/zfs/zfs-load-key.sh
 
 # Defines filesystems to manage
 zfs_filesystems: []
