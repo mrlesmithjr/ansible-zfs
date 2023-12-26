@@ -2,7 +2,7 @@
 - name: Encryption keys | Get encrypted pools
   ansible.builtin.set_fact:
     zfs_encrypted_pools: >-
-      {{ zfs_pools | selectattr('options', 'search', 'keylocation') | map(attribute='name') | list }}
+      {{ zfs_pools | selectattr('options', 'defined') | selectattr('options', 'search', 'keylocation') | map(attribute='name') | list }}
   when: zfs_create_pools
 
 - name: Encryption keys | Get encrypted datasets
@@ -26,7 +26,7 @@
     name: zfs-load-key@{{ item }}
     enabled: true
   loop: "{{ zfs_encrypted_pools }}"
-  when: zfs_create_pools
+  when: zfs_create_pools and (zfs_encrypted_pools|length > 0)
 
 - name: Encryption keys | Activate key-load service for encrypted datasets
   ansible.builtin.systemd_service:
