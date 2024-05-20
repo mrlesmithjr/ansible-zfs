@@ -166,8 +166,8 @@
   notify:
     - restart iscsitarget
   when: >
-    zfs_enable_iscsi is defined and
-    zfs_enable_iscsi
+        zfs_enable_iscsi is defined and
+        zfs_enable_iscsi
 
 - name: manage_zfs | configuring iscsi device access
   template:
@@ -179,8 +179,8 @@
   notify:
     - restart iscsitarget
   when: >
-    zfs_enable_iscsi is defined and
-    zfs_enable_iscsi
+        zfs_enable_iscsi is defined and
+        zfs_enable_iscsi
 
 - name: manage_zfs | configuring iscsi targets access
   template:
@@ -192,5 +192,5 @@
   notify:
     - restart iscsitarget
   when: >
-    zfs_enable_iscsi is defined and
-    zfs_enable_iscsi
+        zfs_enable_iscsi is defined and
+        zfs_enable_iscsi

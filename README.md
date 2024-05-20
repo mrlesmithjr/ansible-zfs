@@ -200,6 +200,9 @@ zfs_performance_tuning:
 zfs_pools: []
   # - name: SSD-TANK
   #   action: create
+  #   # set permanent options at creation time
+  #   options:
+  #     ashift: 13
   #   # atime: on
   #   # on | off (default) | lzjb | gzip | gzip-1 | gzip-2 | gzip-3 | gzip-4 | gzip-5 | gzip-6 | gzip-7 | gzip-8 | gzip-9 | lz4 | zle
   #   compression: lz4
