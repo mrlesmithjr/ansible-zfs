@@ -123,7 +123,6 @@
   zfs:
     name: "{{ item.pool }}/{{ item.name }}"
     extra_zfs_properties:
-      # shareiscsi: "{{ item.shareiscsi|default(omit) }}"
       compression: "{{ item.compression|default(omit) }}"
       dedup: "{{ item.dedup|default(omit) }}"
       encryption: "{{ item.encryption|default(omit) }}"
@@ -134,6 +133,7 @@
       quota: "{{ item.quota|default(omit) }}"
       recordsize: "{{ item.recordsize|default(omit) }}"
       refquota: "{{ item.refquota|default(omit) }}"
+      # shareiscsi: "{{ item.shareiscsi|default(omit) }}"
       sync: "{{ item.sync|default(omit) }}"
       volsize: "{{ item.volsize|default(omit) }}"
     state: "{{ item.state }}"
