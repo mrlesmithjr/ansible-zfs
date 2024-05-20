@@ -1,72 +1,77 @@
 ---
 - name: manage_zfs | checking existing zpool(s)
-  shell: "zpool list | awk 'FNR >1' | awk '{print $1}'"
+  ansible.builtin.command: "zpool list | awk 'FNR >1' | awk '{print $1}'"
   changed_when: false
   register: zpools
   check_mode: no
   when: zfs_pools is defined
 
 - name: manage_zfs | Gather ZPool Status
-  command: zpool status
+  ansible.builtin.command: zpool status
   changed_when: false
   register: zpool_devices
   check_mode: no
   when: zfs_pools is defined
 
-# - name: manage_zfs | debug
-#   debug:
-#     msg: "zpool create {{ '-o '+ item.options.items() |map('join', '=') | join (' -o ') if item.options is defined else '' }} {{ item.name }} {{ item.devices|join (' ') }}"
-#   with_items: "{{ zfs_pools }}"
+- name: manage_zfs | debug
+  debug:
+    msg: "zpool create {{ '-o '+ item.options.items() |map('join', '=') | join (' -o ') if item.options is defined else '' }} {{ item.name }} {{ item.devices|join (' ') }}"
+  with_items: "{{ zfs_pools }}"
+
+- name: manage_zfs | debug
+  debug:
+    msg: "zpool create {{ item.options | join (' ') if item.options is defined else '' }} {{ item.name }} {{ item.devices|join (' ') }}"
+  with_items: "{{ zfs_pools }}"
 
 - name: manage_zfs | creating basic zpool(s)
-  command: "zpool create {{ '-o '+ item.options.items() |map('join', '=') | join (' -o ') if item.options is defined else '' }} {{ item.name }} {{ item.devices|join (' ') }}"
+  ansible.builtin.command: "zpool create {{ '-o '+ item.options.items() |map('join', '=') | join (' -o ') if item.options is defined else '' }} {{ item.name }} {{ item.devices|join (' ') }}"
   register: zpool_created
   with_items: "{{ zfs_pools }}"
   when: >
-    zfs_pools is defined and
-    zfs_create_pools and
-    (item.type == "basic" and
-    item.name not in zpools.stdout and
-    item.state == "present") and
-    item.devices[0] not in zpool_devices.stdout and
-    item.action|lower == "create"
+        zfs_pools is defined and
+        zfs_create_pools and
+        (item.type == "basic" and
+        item.name not in zpools.stdout and
+        item.state == "present") and
+        item.devices[0] not in zpool_devices.stdout and
+        item.action|lower == "create"
 
 - name: manage_zfs | adding basic zpool(s)
-  command: "zpool add {{ '-o '+ item.options.items() |map('join', '=') | join (' -o ') if item.options is defined else '' }} {{ item.name }} {{ item.devices|join (' ') }}"
+  ansible.builtin.command: "zpool add {{ '-o '+ item.options.items() |map('join', '=') | join (' -o ') if item.options is defined else '' }} {{ item.name }} {{ item.devices|join (' ') }}"
   with_items: "{{ zfs_pools }}"
   when: >
-    zfs_pools is defined and
-    zfs_create_pools and
-    (item.type == "basic" and
-    item.state == "present") and
-    (item.devices[0]|basename) not in zpool_devices.stdout and
-    item.action|lower == "add" and
-    (zpool_created.changed or item.name in zpools.stdout)
+        zfs_pools is defined and
+        zfs_create_pools and
+        (item.type == "basic" and
+        item.state == "present") and
+        (item.devices[0]|basename) not in zpool_devices.stdout and
+        item.action|lower == "add" and
+        (zpool_created.changed or item.name in zpools.stdout)
 
 - name: manage_zfs | creating mirror/zraid zpool(s)
-  command: "zpool create {{ '-o '+ item.options.items() |map('join', '=') | join (' -o ') if item.options is defined else '' }} {{ item.name }} {{ item.type }} {{ item.devices|join (' ') }}"
+  ansible.builtin.command: "zpool create {{ '-o '+ item.options.items() |map('join', '=') | join (' -o ') if item.options is defined else '' }} {{ item.name }} {{ item.type }} {{ item.devices|join (' ') }}"
   with_items: "{{ zfs_pools }}"
   register: zpool_created
   when: >
-    zfs_pools is defined and
-    zfs_create_pools and
-    (item.type != "basic" and
-    item.name not in zpools.stdout and
-    item.state == "present") and
-    item.devices[0] not in zpool_devices.stdout and
-    item.action|lower == "create"
+        zfs_pools is defined and
+        zfs_create_pools and
+        (item.type != "basic" and
+        item.name not in zpools.stdout and
+        item.state == "present") and
+        item.devices[0] not in zpool_devices.stdout and
+        item.action|lower == "create"
 
 - name: manage_zfs | adding mirror/zraid zpool(s)
-  command: "zpool add {{ '-o '+ item.options.items() |map('join', '=') | join (' -o ') if item.options is defined else '' }} {{ item.name }} {{ item.type }} {{ item.devices|join (' ') }}"
+  ansible.builtin.command: "zpool add {{ '-o '+ item.options.items() |map('join', '=') | join (' -o ') if item.options is defined else '' }} {{ item.name }} {{ item.type }} {{ item.devices|join (' ') }}"
   with_items: "{{ zfs_pools }}"
   when: >
-    zfs_pools is defined and
-    zfs_create_pools and
-    (item.type != "basic" and
-    item.state == "present") and
-    (item.devices[0]|basename) not in zpool_devices.stdout and
-    item.action|lower == "add" and
-    (zpool_created.changed or item.name in zpools.stdout)
+        zfs_pools is defined and
+        zfs_create_pools and
+        (item.type != "basic" and
+        item.state == "present") and
+        (item.devices[0]|basename) not in zpool_devices.stdout and
+        item.action|lower == "add" and
+        (zpool_created.changed or item.name in zpools.stdout)
 
 - name: manage_zfs | managing pools
   zfs:
