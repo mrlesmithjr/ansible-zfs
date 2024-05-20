@@ -1,13 +1,13 @@
 ---
 - name: manage_zfs | checking existing zpool(s)
-  ansible.builtin.command: "zpool list | awk 'FNR >1' | awk '{print $1}'"
+  ansible.builtin.shell: "zpool list | awk 'FNR >1' | awk '{print $1}'"
   changed_when: false
   register: zpools
   check_mode: no
   when: zfs_pools is defined
 
 - name: manage_zfs | Gather ZPool Status
-  ansible.builtin.command: zpool status
+  ansible.builtin.shell: zpool status
   changed_when: false
   register: zpool_devices
   check_mode: no
@@ -67,6 +67,8 @@
   zfs:
     name: "{{ item.name }}"
     extra_zfs_properties:
+      aclinherit: "{{ item.aclinherit|default(omit) }}"
+      acltype: "{{ item.acltype|default(omit) }}"
       atime: "{{ item.atime|default(omit) }}"
       compression: "{{ item.compression|default(omit) }}"
       dedup: "{{ item.dedup|default(omit) }}"
@@ -74,15 +76,13 @@
       mountpoint: "{{ item.mountpoint|default(omit) }}"
       primarycache: "{{ item.primarycache|default(omit) }}"
       quota: "{{ item.quota|default(omit) }}"
-      refquota: "{{ item.refquota|default(omit) }}"
       recordsize: "{{ item.recordsize|default(omit) }}"
+      refquota: "{{ item.refquota|default(omit) }}"
       sharenfs: "{{ item.sharenfs|default(omit) }}"
-      aclinherit: "{{ item.aclinherit|default(omit) }}"
-      acltype: "{{ item.acltype|default(omit) }}"
-      xattr: "{{ item.xattr|default(omit) }}"
-      sync: "{{ item.sync|default(omit) }}"
       snapdev: "{{ item.snapdev|default('hidden') }}"
       snapdir: "{{ item.snapdir|default('hidden') }}"
+      sync: "{{ item.sync|default(omit) }}"
+      xattr: "{{ item.xattr|default(omit) }}"
     state: "{{ item.state }}"
   with_items: "{{ zfs_pools }}"
   when: zfs_create_pools
