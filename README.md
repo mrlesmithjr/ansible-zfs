@@ -338,6 +338,8 @@ zfs_pools:  #defines zpool(s) to manage
   - name: 'SSD-TANK'
     action: 'create'
 #    atime: 'on'
+    options: # set permanent options at creation time
+      ashift: 13
     compression: 'lz4'  # on | off (default) | lzjb | gzip | gzip-1 | gzip-2 | gzip-3 | gzip-4 | gzip-5 | gzip-6 | gzip-7 | gzip-8 | gzip-9 | lz4 | zle
     devices:  #define devices to create pool with...can define multiple by | sdb sdc sdd sde sdf | all on one line w/spaces
       - 'ata-INTEL_SSDSC2BW240A4_CVDA352100YL2403GN'
