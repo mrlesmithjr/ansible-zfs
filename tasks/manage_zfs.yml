@@ -1,20 +1,20 @@
 ---
 - name: manage_zfs | checking existing zpool(s)
-  shell: "zpool list | awk 'FNR >1' | awk '{print $1}'"
+  ansible.builtin.shell: "zpool list | awk 'FNR >1' | awk '{print $1}'"
   changed_when: false
   register: zpools
   check_mode: no
   when: zfs_pools is defined
 
 - name: manage_zfs | Gather ZPool Status
-  shell: zpool status
+  ansible.builtin.shell: zpool status
   changed_when: false
   register: zpool_devices
   check_mode: no
   when: zfs_pools is defined
 
 - name: manage_zfs | creating basic zpool(s)
-  command: "zpool create {{ item.options | join (' ') if item.options is defined else '' }} {{ item.name }} {{ item.devices|join (' ') }}"
+  ansible.builtin.command: "zpool create {{ '-o '+ item.options.items() |map('join', '=') | join (' -o ') if item.options is defined else '' }} {{ item.name }} {{ item.devices|join (' ') }}"
   register: zpool_created
   with_items: "{{ zfs_pools }}"
   when: >
@@ -27,7 +27,7 @@
         item.action|lower == "create"
 
 - name: manage_zfs | adding basic zpool(s)
-  command: "zpool add {{ item.options | join (' ') if item.options is defined else '' }} {{ item.name }} {{ item.devices|join (' ') }}"
+  ansible.builtin.command: "zpool add {{ '-o '+ item.options.items() |map('join', '=') | join (' -o ') if item.options is defined else '' }} {{ item.name }} {{ item.devices|join (' ') }}"
   with_items: "{{ zfs_pools }}"
   when: >
         zfs_pools is defined and
@@ -39,7 +39,7 @@
         (zpool_created.changed or item.name in zpools.stdout)
 
 - name: manage_zfs | creating mirror/zraid zpool(s)
-  command: "zpool create {{ item.options | join (' ') if item.options is defined else '' }} {{ item.name }} {{ item.type }} {{ item.devices|join (' ') }}"
+  ansible.builtin.command: "zpool create {{ '-o '+ item.options.items() |map('join', '=') | join (' -o ') if item.options is defined else '' }} {{ item.name }} {{ item.type }} {{ item.devices|join (' ') }}"
   with_items: "{{ zfs_pools }}"
   register: zpool_created
   when: >
@@ -52,7 +52,7 @@
         item.action|lower == "create"
 
 - name: manage_zfs | adding mirror/zraid zpool(s)
-  command: "zpool add {{ item.options | join (' ') if item.options is defined else '' }} {{ item.name }} {{ item.type }} {{ item.devices|join (' ') }}"
+  ansible.builtin.command: "zpool add {{ '-o '+ item.options.items() |map('join', '=') | join (' -o ') if item.options is defined else '' }} {{ item.name }} {{ item.type }} {{ item.devices|join (' ') }}"
   with_items: "{{ zfs_pools }}"
   when: >
         zfs_pools is defined and
@@ -67,6 +67,7 @@
   zfs:
     name: "{{ item.name }}"
     extra_zfs_properties:
+      aclinherit: "{{ item.aclinherit|default(omit) }}"
       acltype: "{{ item.acltype|default(omit) }}"
       atime: "{{ item.atime|default(omit) }}"
       compression: "{{ item.compression|default(omit) }}"
@@ -75,12 +76,12 @@
       mountpoint: "{{ item.mountpoint|default(omit) }}"
       primarycache: "{{ item.primarycache|default(omit) }}"
       quota: "{{ item.quota|default(omit) }}"
-      refquota: "{{ item.refquota|default(omit) }}"
       recordsize: "{{ item.recordsize|default(omit) }}"
+      refquota: "{{ item.refquota|default(omit) }}"
       sharenfs: "{{ item.sharenfs|default(omit) }}"
+      snapdev: "{{ item.snapdev|default('hidden') }}"
+      snapdir: "{{ item.snapdir|default('hidden') }}"
       sync: "{{ item.sync|default(omit) }}"
-      snapdev: "{{ item.snapdev|default('hidden')}}"
-      snapdir: "{{ item.snapdir|default('hidden')}}"
       xattr: "{{ item.xattr|default(omit) }}"
     state: "{{ item.state }}"
   with_items: "{{ zfs_pools }}"
@@ -90,6 +91,7 @@
   zfs:
     name: "{{ item.pool }}/{{ item.name }}"
     extra_zfs_properties:
+      aclinherit: "{{ item.aclinherit|default(omit) }}"
       acltype: "{{ item.acltype|default(omit) }}"
       atime: "{{ item.atime|default(omit) }}"
       compression: "{{ item.compression|default(omit) }}"
@@ -101,11 +103,11 @@
       mountpoint: "{{ item.mountpoint|default(omit) }}"
       primarycache: "{{ item.primarycache|default(omit) }}"
       quota: "{{ item.quota|default(omit) }}"
-      refquota: "{{ item.refquota|default(omit) }}"
       recordsize: "{{ item.recordsize|default(omit) }}"
+      refquota: "{{ item.refquota|default(omit) }}"
       sharenfs: "{{ item.sharenfs|default(omit) }}"
-      snapdev: "{{ item.snapdev|default('hidden')}}"
-      snapdir: "{{ item.snapdir|default('hidden')}}"
+      snapdev: "{{ item.snapdev|default('hidden') }}"
+      snapdir: "{{ item.snapdir|default('hidden') }}"
       sync: "{{ item.sync|default(omit) }}"
       xattr: "{{ item.xattr|default(omit) }}"
     state: "{{ item.state }}"
@@ -124,9 +126,9 @@
       logbias: "{{ item.logbias|default(omit) }}"
       primarycache: "{{ item.primarycache|default(omit) }}"
       quota: "{{ item.quota|default(omit) }}"
-      refquota: "{{ item.refquota|default(omit) }}"
       recordsize: "{{ item.recordsize|default(omit) }}"
-  #    shareiscsi: "{{ item.shareiscsi|default(omit) }}"
+      refquota: "{{ item.refquota|default(omit) }}"
+      # shareiscsi: "{{ item.shareiscsi|default(omit) }}"
       sync: "{{ item.sync|default(omit) }}"
       volsize: "{{ item.volsize|default(omit) }}"
     state: "{{ item.state }}"
