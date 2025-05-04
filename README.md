@@ -8,7 +8,7 @@
   - [Role Variables](#role-variables)
   - [Dependencies](#dependencies)
   - [Example Playbook](#example-playbook)
-      - [GitHub](#github)
+    - [GitHub](#github)
   - [Advanced Example ZPool Creation](#advanced-example-zpool-creation)
   - [License](#license)
   - [Author Information](#author-information)
@@ -425,12 +425,12 @@ zfs_pools:  #defines zpool(s) to manage
 
 ## License
 
-BSD
+MIT
 
 ## Author Information
 
 Larry Smith Jr.
 
--   @mrlesmithjr
--   <http://everythingshouldbevirtual.com>
--   mrlesmithjr [at] gmail.com
+- @mrlesmithjr
+- <http://everythingshouldbevirtual.com>
+- mrlesmithjr [at] gmail.com
