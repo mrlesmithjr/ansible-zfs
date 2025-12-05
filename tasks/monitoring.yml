@@ -1,14 +1,24 @@
 ---
-- name: monitoring | scheduling zpool scrubs
-  cron:
+- name: Monitoring | Schedule zpool scrubs
+  ansible.builtin.cron:
     name: "{{ item.name }} zpool scrub"
     cron_file: zpool_scrub
     user: root
-    minute: "{{ (item.scrub_cron | default(zfs_pools_scrub_cron)).minute | default(zfs_pools_scrub_cron.minute) }}"
-    hour: "{{ (item.scrub_cron | default(zfs_pools_scrub_cron)).hour | default(zfs_pools_scrub_cron.hour) }}"
-    day: "{{ (item.scrub_cron | default(zfs_pools_scrub_cron)).day | default(zfs_pools_scrub_cron.day) }}"
-    month: "{{ (item.scrub_cron | default(zfs_pools_scrub_cron)).month | default(zfs_pools_scrub_cron.month) }}"
-    weekday: "{{ (item.scrub_cron | default(zfs_pools_scrub_cron)).weekday | default(zfs_pools_scrub_cron.weekday) }}"
+    minute: >-
+      {{ (item.scrub_cron | default(zfs_pools_scrub_cron)).minute |
+      default(zfs_pools_scrub_cron.minute) }}
+    hour: >-
+      {{ (item.scrub_cron | default(zfs_pools_scrub_cron)).hour |
+      default(zfs_pools_scrub_cron.hour) }}
+    day: >-
+      {{ (item.scrub_cron | default(zfs_pools_scrub_cron)).day |
+      default(zfs_pools_scrub_cron.day) }}
+    month: >-
+      {{ (item.scrub_cron | default(zfs_pools_scrub_cron)).month |
+      default(zfs_pools_scrub_cron.month) }}
+    weekday: >-
+      {{ (item.scrub_cron | default(zfs_pools_scrub_cron)).weekday |
+      default(zfs_pools_scrub_cron.weekday) }}
     job: "/sbin/zpool scrub {{ item.name }}"
   with_items: "{{ zfs_pools }}"
   when: >-
@@ -18,8 +28,8 @@
 
 # zfsutils-linux comes with a scrub cron job.
 # It is removed if at least one zpool scrub is defined.
-- name: monitoring | removing zfsutils-linux cron job
-  file:
+- name: Monitoring | Remove zfsutils-linux cron job
+  ansible.builtin.file:
     dest: /etc/cron.d/zfsutils-linux
     state: absent
   when: >-
@@ -30,16 +40,16 @@
       | list | length)
     < (zfs_pools | length)
 
-- name: monitoring | configuring ZFS monitoring
-  template:
+- name: Monitoring | Configure ZFS monitoring script
+  ansible.builtin.template:
     src: opt/zfs_health_check.sh.j2
     dest: /opt/zfs_health_check.sh
     owner: root
     group: root
-    mode: 0744
+    mode: "0744"
 
-- name: monitoring | scheduling ZFS monitoring
-  cron:
+- name: Monitoring | Schedule ZFS monitoring
+  ansible.builtin.cron:
     name: zpool health check
     cron_file: zpool_health_check
     user: root

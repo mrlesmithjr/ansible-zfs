@@ -1,0 +1,17 @@
+---
+profile: production
+
+exclude_paths:
+  - .github/
+  - .git/
+  - tests/
+
+skip_list:
+  - var-naming[no-role-prefix]  # Allow variables without role prefix for backwards compatibility
+
+warn_list:
+  - experimental
+  - role-name[path]
+
+enable_list:
+  - yaml

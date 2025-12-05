@@ -9,7 +9,7 @@ zfs_create_pools: false
 
 # Overwrite debian release
 # debian_release:
-debian_use_backports: True
+debian_use_backports: true
 
 # Defines Ubuntu Repo
 ubuntu_apt_repository: http://us.archive.ubuntu.com/ubuntu
