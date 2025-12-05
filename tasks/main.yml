@@ -1,32 +1,39 @@
 ---
 # tasks file for ansible-zfs
 
-- set_fact:
+- name: Set zfs_install_update default
+  ansible.builtin.set_fact:
     zfs_install_update: true
   when: zfs_install_update is undefined
 
-- include_tasks: debian.yml
-  when: ansible_distribution == "Debian" and zfs_install_update == true
+- name: Include Debian tasks
+  ansible.builtin.include_tasks: debian.yml
+  when: ansible_distribution == "Debian" and zfs_install_update
 
-- include_tasks: ubuntu.yml
-  when: ansible_distribution == "Ubuntu" and zfs_install_update == true
+- name: Include Ubuntu tasks
+  ansible.builtin.include_tasks: ubuntu.yml
+  when: ansible_distribution == "Ubuntu" and zfs_install_update
 
-- name: Encryption keys
-  include_tasks: encryption_keys.yml
+- name: Include encryption keys tasks
+  ansible.builtin.include_tasks: encryption_keys.yml
   when: >
-        (zfs_create_pools or
-        zfs_create_filesystems) and
-        zfs_autoload_encryption_keys
+    (zfs_create_pools or
+    zfs_create_filesystems) and
+    zfs_autoload_encryption_keys
 
-- include_tasks: manage_zfs.yml
+- name: Include ZFS management tasks
+  ansible.builtin.include_tasks: manage_zfs.yml
 
-- include_tasks: samba.yml
+- name: Include Samba tasks
+  ansible.builtin.include_tasks: samba.yml
   when: zfs_enable_samba
 
-- include_tasks: tune_zfs.yml
+- name: Include ZFS tuning tasks
+  ansible.builtin.include_tasks: tune_zfs.yml
   when: >
-        zfs_enable_performance_tuning is defined and
-        zfs_enable_performance_tuning
+    zfs_enable_performance_tuning is defined and
+    zfs_enable_performance_tuning
 
-- include_tasks: monitoring.yml
+- name: Include monitoring tasks
+  ansible.builtin.include_tasks: monitoring.yml
   when: zfs_enable_monitoring

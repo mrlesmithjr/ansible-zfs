@@ -1,112 +1,116 @@
 ---
-- name: ubuntu | adding zfs ppa
-  apt_repository:
+- name: Ubuntu | Add ZFS PPA
+  ansible.builtin.apt_repository:
     repo: "{{ zfs_ubuntu_ppa }}"
     state: present
   when: >
-        ansible_distribution_version <= '14.04'
+    ansible_distribution_version <= '14.04'
 
-- name: ubuntu | installing zfs ({{ ansible_distribution_version }} <= 14.04)
-  apt:
+- name: Ubuntu | Install ZFS ({{ ansible_distribution_version }} <= 14.04)
+  ansible.builtin.apt:
     name: ubuntu-zfs
     state: present
   when: >
-        ansible_distribution_version <= '14.04'
+    ansible_distribution_version <= '14.04'
 
-- name: ubuntu | ensuring Ubuntu universe repo is enabled ({{ ansible_distribution_version }} >= 16.04)
-  apt_repository:
-    repo: "deb {{ ubuntu_apt_repository }} {{ ansible_distribution_release|lower }} universe"
+- name: >-
+    Ubuntu | Ensure Ubuntu universe repo is enabled
+    ({{ ansible_distribution_version }} >= 16.04)
+  ansible.builtin.apt_repository:
+    repo: >-
+      deb {{ ubuntu_apt_repository }}
+      {{ ansible_distribution_release | lower }} universe
     state: present
   when: >
-        ansible_distribution_version >= '16.04'
+    ansible_distribution_version >= '16.04'
 
-- name: ubuntu | installing zfs ({{ ansible_distribution_version }} >= 16.04)
-  apt:
+- name: Ubuntu | Install ZFS ({{ ansible_distribution_version }} >= 16.04)
+  ansible.builtin.apt:
     name: zfsutils-linux
     state: present
   when: >
-        ansible_distribution_version >= '16.04'
+    ansible_distribution_version >= '16.04'
 
-- name: ubuntu | enabling zfs module
-  modprobe:
+- name: Ubuntu | Enable ZFS module
+  community.general.modprobe:
     name: zfs
     state: present
 
-- name: ubuntu | installing iscsitarget (if enabled)
-  apt:
+- name: Ubuntu | Install iscsitarget (if enabled)
+  ansible.builtin.apt:
     name:
       - iscsitarget
       - iscsitarget-dkms
     state: present
   when: >
-        zfs_enable_iscsi is defined and
-        zfs_enable_iscsi
+    zfs_enable_iscsi is defined and
+    zfs_enable_iscsi
 
-- name: ubuntu | un-installing iscsitarget (if not enabled)
-  apt:
+- name: Ubuntu | Uninstall iscsitarget (if not enabled)
+  ansible.builtin.apt:
     name:
       - iscsitarget
       - iscsitarget-dkms
     state: absent
   when: >
-        zfs_enable_iscsi is defined and
-        not zfs_enable_iscsi
+    zfs_enable_iscsi is defined and
+    not zfs_enable_iscsi
 
-- name: ubuntu | configuring iscsitarget service
-  template:
+- name: Ubuntu | Configure iscsitarget service
+  ansible.builtin.template:
     src: etc/default/iscsitarget.j2
     dest: /etc/default/iscsitarget
     owner: root
     group: root
-    mode: 0644
+    mode: "0644"
   notify:
-    - restart iscsitarget
+    - Restart iscsitarget
   when: >
-        zfs_enable_iscsi is defined and
-        zfs_enable_iscsi
+    zfs_enable_iscsi is defined and
+    zfs_enable_iscsi
 
-- name: ubuntu | installing NFS (if enabled)
-  apt:
+- name: Ubuntu | Install NFS (if enabled)
+  ansible.builtin.apt:
     name: nfs-kernel-server
     state: present
   when: >
-        zfs_enable_nfs is defined and
-        zfs_enable_nfs
+    zfs_enable_nfs is defined and
+    zfs_enable_nfs
 
-- name: ubuntu | un-installing NFS (if not enabled)
-  apt:
+- name: Ubuntu | Uninstall NFS (if not enabled)
+  ansible.builtin.apt:
     name: nfs-kernel-server
     state: absent
   when: >
-        zfs_enable_nfs is defined and
-        not zfs_enable_nfs
+    zfs_enable_nfs is defined and
+    not zfs_enable_nfs
 
-- name: ubuntu | configuring NFS Kernel Server
-  template:
+- name: Ubuntu | Configure NFS Kernel Server
+  ansible.builtin.template:
     src: etc/exports.j2
     dest: /etc/exports
     owner: root
     group: root
-    mode: 0644
+    mode: "0644"
   notify:
-    - restart nfs-kernel-server
-    - start zfs-share
+    - Restart nfs-kernel-server
+    - Start zfs-share
   when: >
-        zfs_enable_nfs is defined and
-        zfs_enable_nfs
+    zfs_enable_nfs is defined and
+    zfs_enable_nfs
 
-- name: ubuntu | configuring ZFS
-  template:
+- name: Ubuntu | Configure ZFS
+  ansible.builtin.template:
     src: etc/default/zfs.j2
     dest: /etc/default/zfs
     owner: root
     group: root
-    mode: 0644
+    mode: "0644"
   notify:
-    - start zfs-share
+    - Start zfs-share
 
-- name: ubuntu | Checking for ZFS-Auto-Snapshot package from the distribution
-  command: apt-cache show zfs-auto-snapshot
+- name: Ubuntu | Check for ZFS-Auto-Snapshot package from the distribution
+  ansible.builtin.command: apt-cache show zfs-auto-snapshot
   ignore_errors: true
   register: auto_snapshot
   when: zfs_enable_auto_snapshots
@@ -114,16 +118,16 @@
   failed_when: false
   check_mode: false
 
-- name: ubuntu | Adding ZFS-Auto-Snapshot Repo
-  apt_repository:
+- name: Ubuntu | Add ZFS-Auto-Snapshot Repo
+  ansible.builtin.apt_repository:
     repo: ppa:bob-ziuchkovski/zfs-auto-snapshot
     state: present
   when: >
     zfs_enable_auto_snapshots and
     auto_snapshot.stderr == 'E: No packages found'
 
-- name: ubuntu | Installing ZFS-Auto-Snapshot
-  apt:
+- name: Ubuntu | Install ZFS-Auto-Snapshot
+  ansible.builtin.apt:
     name: zfs-auto-snapshot
     state: present
   when: zfs_enable_auto_snapshots

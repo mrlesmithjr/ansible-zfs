@@ -1,24 +1,24 @@
 ---
 # handlers file for ansible-zfs
-- name: restart iscsitarget
-  service:
+- name: Restart iscsitarget
+  ansible.builtin.service:
     name: "iscsitarget"
     state: restarted
   when: >
-        zfs_enable_iscsi is defined and
-        zfs_enable_iscsi
+    zfs_enable_iscsi is defined and
+    zfs_enable_iscsi
 
-- name: restart nfs-kernel-server
-  service:
+- name: Restart nfs-kernel-server
+  ansible.builtin.service:
     name: "nfs-kernel-server"
     state: restarted
 
-- name: restart samba
-  service:
+- name: Restart samba
+  ansible.builtin.service:
     name: "smbd"
     state: "restarted"
 
-- name: start zfs-share
-  service:
+- name: Start zfs-share
+  ansible.builtin.service:
     name: "zfs-share"
     state: started

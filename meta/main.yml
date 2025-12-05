@@ -1,5 +1,7 @@
 galaxy_info:
   author: Larry Smith Jr.
+  namespace: mrlesmithjr
+  role_name: zfs
   description: Installs and configures ZFS On Linux (http://zfsonlinux.org/)
   #company: your company (optional)
 
@@ -16,7 +18,7 @@ galaxy_info:
   # - CC-BY
   license: MIT
 
-  min_ansible_version: 2.5
+  min_ansible_version: "2.14"
 
   # Optionally specify the branch Galaxy will use when accessing the GitHub
   # repo for this role. During role install, if no tags are available,
@@ -104,19 +106,9 @@ galaxy_info:
     #  - 9.3
     - name: Ubuntu
       versions:
-        #  - all
-        #  - lucid
-        #  - maverick
-        #  - natty
-        #  - oneiric
-        #  - precise
-        #  - quantal
-        #  - raring
-        #  - saucy
-        - trusty
-        #  - utopic
-        - vivid
-        - wily
+        - focal
+        - jammy
+        - noble
     #- name: SLES
     #  versions:
     #  - all
@@ -132,12 +124,8 @@ galaxy_info:
     #  - any
     - name: Debian
       versions:
-        #  - all
-        #  - etch
-        - jessie
-  #  - lenny
-  #  - squeeze
-  #  - wheezy
+        - bullseye
+        - bookworm
 
   galaxy_tags:
     # List tags for your role here, one per line. A tag is
