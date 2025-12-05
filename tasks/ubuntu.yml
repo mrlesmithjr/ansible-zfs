@@ -13,9 +13,13 @@
   when: >
     ansible_distribution_version <= '14.04'
 
-- name: Ubuntu | Ensure Ubuntu universe repo is enabled ({{ ansible_distribution_version }} >= 16.04)
+- name: >-
+    Ubuntu | Ensure Ubuntu universe repo is enabled
+    ({{ ansible_distribution_version }} >= 16.04)
   ansible.builtin.apt_repository:
-    repo: "deb {{ ubuntu_apt_repository }} {{ ansible_distribution_release | lower }} universe"
+    repo: >-
+      deb {{ ubuntu_apt_repository }}
+      {{ ansible_distribution_release | lower }} universe
     state: present
   when: >
     ansible_distribution_version >= '16.04'

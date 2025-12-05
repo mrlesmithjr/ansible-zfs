@@ -14,7 +14,11 @@
   when: zfs_pools is defined
 
 - name: Manage ZFS | Create basic zpool(s)
-  ansible.builtin.command: "zpool create {{ '-o '+ item.options.items() |map('join', '=') | join (' -o ') if item.options is defined else '' }} {{ item.name }} {{ item.devices|join (' ') }}"
+  ansible.builtin.command: >-
+    zpool create
+    {{ '-o '+ item.options.items() |map('join', '=') | join (' -o ')
+    if item.options is defined else '' }}
+    {{ item.name }} {{ item.devices|join (' ') }}
   register: zpool_created
   with_items: "{{ zfs_pools }}"
   when: >
@@ -27,7 +31,11 @@
     item.action  | lower == "create"
 
 - name: Manage ZFS | Add basic zpool(s)
-  ansible.builtin.command: "zpool add {{ '-o '+ item.options.items() |map('join', '=') | join (' -o ') if item.options is defined else '' }} {{ item.name }} {{ item.devices|join (' ') }}"
+  ansible.builtin.command: >-
+    zpool add
+    {{ '-o '+ item.options.items() |map('join', '=') | join (' -o ')
+    if item.options is defined else '' }}
+    {{ item.name }} {{ item.devices|join (' ') }}
   with_items: "{{ zfs_pools }}"
   when: >
         zfs_pools is defined and
@@ -39,7 +47,11 @@
         (zpool_created.changed or item.name in zpools.stdout)
 
 - name: Manage ZFS | Create mirror/zraid zpool(s)
-  ansible.builtin.command: "zpool create {{ '-o '+ item.options.items() |map('join', '=') | join (' -o ') if item.options is defined else '' }} {{ item.name }} {{ item.type }} {{ item.devices|join (' ') }}"
+  ansible.builtin.command: >-
+    zpool create
+    {{ '-o '+ item.options.items() |map('join', '=') | join (' -o ')
+    if item.options is defined else '' }}
+    {{ item.name }} {{ item.type }} {{ item.devices|join (' ') }}
   with_items: "{{ zfs_pools }}"
   register: zpool_created
   when: >
@@ -52,7 +64,11 @@
         item.action | lower == "create"
 
 - name: Manage ZFS | Add mirror/zraid zpool(s)
-  ansible.builtin.command: "zpool add {{ '-o '+ item.options.items() |map('join', '=') | join (' -o ') if item.options is defined else '' }} {{ item.name }} {{ item.type }} {{ item.devices|join (' ') }}"
+  ansible.builtin.command: >-
+    zpool add
+    {{ '-o '+ item.options.items() |map('join', '=') | join (' -o ')
+    if item.options is defined else '' }}
+    {{ item.name }} {{ item.type }} {{ item.devices|join (' ') }}
   with_items: "{{ zfs_pools }}"
   when: >
         zfs_pools is defined and

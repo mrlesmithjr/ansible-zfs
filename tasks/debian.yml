@@ -33,7 +33,7 @@
   when: debian_use_backports
 
 - name: Debian | Install ZFS
-  ansible.builtin.apt: 
+  ansible.builtin.apt:
     name:
       - linux-headers-{{ ansible_kernel }}
       - zfsutils-linux
@@ -49,7 +49,7 @@
 - name: Debian | Install open-iscsi (if enabled)
   ansible.builtin.apt:
     name:
-      - open-iscsi 
+      - open-iscsi
     state: present
   when: >
         zfs_enable_iscsi is defined and

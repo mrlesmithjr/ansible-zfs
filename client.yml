@@ -14,10 +14,10 @@
           fstype: 'ext4'
           mountpoint: '/mnt/data'
     - nfs_mounts:
-      - server: '192.168.202.201'
-        export: '/tank/nfs'
-        mount_options: hard,intr,nfsvers=3,tcp,bg,_netdev,auto,nolock
-        mountpoint: '/mnt/nfs'
+        - server: '192.168.202.201'
+          export: '/tank/nfs'
+          mount_options: hard,intr,nfsvers=3,tcp,bg,_netdev,auto,nolock
+          mountpoint: '/mnt/nfs'
   roles:
   tasks:
     - name: installing client pre-reqs
@@ -30,8 +30,8 @@
     - name: mounting iscsi from server
       open_iscsi:
         portal: "{{ iscsi_portal }}"
-        login: yes
-        discover: yes
+        login: true
+        discover: true
         target: "{{ item.target }}"
         auto_node_startup: "{{ iscsi_mount_on_boot }}"
       changed_when: false
