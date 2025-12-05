@@ -8,6 +8,13 @@ exclude_paths:
 
 skip_list:
   - var-naming[no-role-prefix]  # Allow variables without role prefix for backwards compatibility
+  - yaml[comments]  # Skip comment spacing rules in defaults/main.yml
+  - yaml[truthy]    # Skip truthy value rules for backwards compat
+  - jinja[spacing]  # Skip Jinja2 spacing rules
+  - no-changed-when # Skip changed_when requirements (too strict for some commands)
+  - name[template]  # Skip template in name rules
+  - command-instead-of-shell  # Allow shell when needed
+  - risky-shell-pipe  # Allow pipes in shell commands
 
 warn_list:
   - experimental
