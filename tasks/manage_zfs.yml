@@ -24,7 +24,7 @@
     item.name not in zpools.stdout and
     item.state == "present") and
     item.devices[0] not in zpool_devices.stdout and
-    item.action | lower == "create"
+    item.action  | lower == "create"
 
 - name: Manage ZFS | Add basic zpool(s)
   ansible.builtin.command: "zpool add {{ '-o '+ item.options.items() |map('join', '=') | join (' -o ') if item.options is defined else '' }} {{ item.name }} {{ item.devices|join (' ') }}"
@@ -34,8 +34,8 @@
         zfs_create_pools and
         (item.type == "basic" and
         item.state == "present") and
-        (item.devices[0]| basename) not in zpool_devices.stdout and
-        item.action| lower == "add" and
+        (item.devices[0] | basename) not in zpool_devices.stdout and
+        item.action | lower == "add" and
         (zpool_created.changed or item.name in zpools.stdout)
 
 - name: Manage ZFS | Create mirror/zraid zpool(s)
@@ -49,7 +49,7 @@
         item.name not in zpools.stdout and
         item.state == "present") and
         item.devices[0] not in zpool_devices.stdout and
-        item.action| lower == "create"
+        item.action | lower == "create"
 
 - name: Manage ZFS | Add mirror/zraid zpool(s)
   ansible.builtin.command: "zpool add {{ '-o '+ item.options.items() |map('join', '=') | join (' -o ') if item.options is defined else '' }} {{ item.name }} {{ item.type }} {{ item.devices|join (' ') }}"
@@ -59,30 +59,30 @@
         zfs_create_pools and
         (item.type != "basic" and
         item.state == "present") and
-        (item.devices[0]| basename) not in zpool_devices.stdout and
-        item.action| lower == "add" and
+        (item.devices[0] | basename) not in zpool_devices.stdout and
+        item.action | lower == "add" and
         (zpool_created.changed or item.name in zpools.stdout)
 
 - name: Manage ZFS | Manage pools
   community.general.zfs:
     name: "{{ item.name }}"
     extra_zfs_properties:
-      aclinherit: "{{ item.aclinherit| default(omit) }}"
-      acltype: "{{ item.acltype| default(omit) }}"
-      atime: "{{ item.atime| default(omit) }}"
-      compression: "{{ item.compression| default(omit) }}"
-      dedup: "{{ item.dedup| default(omit) }}"
-      logbias: "{{ item.logbias| default(omit) }}"
-      mountpoint: "{{ item.mountpoint| default(omit) }}"
-      primarycache: "{{ item.primarycache| default(omit) }}"
-      quota: "{{ item.quota| default(omit) }}"
-      recordsize: "{{ item.recordsize| default(omit) }}"
-      refquota: "{{ item.refquota| default(omit) }}"
-      sharenfs: "{{ item.sharenfs| default(omit) }}"
-      snapdev: "{{ item.snapdev| default('hidden') }}"
-      snapdir: "{{ item.snapdir| default('hidden') }}"
-      sync: "{{ item.sync| default(omit) }}"
-      xattr: "{{ item.xattr| default(omit) }}"
+      aclinherit: "{{ item.aclinherit | default(omit) }}"
+      acltype: "{{ item.acltype | default(omit) }}"
+      atime: "{{ item.atime | default(omit) }}"
+      compression: "{{ item.compression | default(omit) }}"
+      dedup: "{{ item.dedup | default(omit) }}"
+      logbias: "{{ item.logbias | default(omit) }}"
+      mountpoint: "{{ item.mountpoint | default(omit) }}"
+      primarycache: "{{ item.primarycache | default(omit) }}"
+      quota: "{{ item.quota | default(omit) }}"
+      recordsize: "{{ item.recordsize | default(omit) }}"
+      refquota: "{{ item.refquota | default(omit) }}"
+      sharenfs: "{{ item.sharenfs | default(omit) }}"
+      snapdev: "{{ item.snapdev | default('hidden') }}"
+      snapdir: "{{ item.snapdir | default('hidden') }}"
+      sync: "{{ item.sync | default(omit) }}"
+      xattr: "{{ item.xattr | default(omit) }}"
     state: "{{ item.state }}"
   with_items: "{{ zfs_pools }}"
   when: zfs_create_pools
@@ -91,25 +91,25 @@
   community.general.zfs:
     name: "{{ item.pool }}/{{ item.name }}"
     extra_zfs_properties:
-      aclinherit: "{{ item.aclinherit| default(omit) }}"
-      acltype: "{{ item.acltype| default(omit) }}"
-      atime: "{{ item.atime| default(omit) }}"
-      compression: "{{ item.compression| default(omit) }}"
-      dedup: "{{ item.dedup| default(omit) }}"
-      encryption: "{{ item.encryption| default(omit) }}"
-      keyformat: "{{ item.keyformat| default(omit) }}"
-      keylocation: "{{ item.keylocation| default(omit) }}"
-      logbias: "{{ item.logbias| default(omit) }}"
-      mountpoint: "{{ item.mountpoint| default(omit) }}"
-      primarycache: "{{ item.primarycache| default(omit) }}"
-      quota: "{{ item.quota| default(omit) }}"
-      recordsize: "{{ item.recordsize| default(omit) }}"
-      refquota: "{{ item.refquota| default(omit) }}"
-      sharenfs: "{{ item.sharenfs| default(omit) }}"
-      snapdev: "{{ item.snapdev| default('hidden') }}"
-      snapdir: "{{ item.snapdir| default('hidden') }}"
-      sync: "{{ item.sync| default(omit) }}"
-      xattr: "{{ item.xattr| default(omit) }}"
+      aclinherit: "{{ item.aclinherit | default(omit) }}"
+      acltype: "{{ item.acltype | default(omit) }}"
+      atime: "{{ item.atime | default(omit) }}"
+      compression: "{{ item.compression | default(omit) }}"
+      dedup: "{{ item.dedup | default(omit) }}"
+      encryption: "{{ item.encryption | default(omit) }}"
+      keyformat: "{{ item.keyformat | default(omit) }}"
+      keylocation: "{{ item.keylocation | default(omit) }}"
+      logbias: "{{ item.logbias | default(omit) }}"
+      mountpoint: "{{ item.mountpoint | default(omit) }}"
+      primarycache: "{{ item.primarycache | default(omit) }}"
+      quota: "{{ item.quota | default(omit) }}"
+      recordsize: "{{ item.recordsize | default(omit) }}"
+      refquota: "{{ item.refquota | default(omit) }}"
+      sharenfs: "{{ item.sharenfs | default(omit) }}"
+      snapdev: "{{ item.snapdev | default('hidden') }}"
+      snapdir: "{{ item.snapdir | default('hidden') }}"
+      sync: "{{ item.sync | default(omit) }}"
+      xattr: "{{ item.xattr | default(omit) }}"
     state: "{{ item.state }}"
   with_items: "{{ zfs_filesystems }}"
   when: zfs_create_filesystems
@@ -118,19 +118,19 @@
   community.general.zfs:
     name: "{{ item.pool }}/{{ item.name }}"
     extra_zfs_properties:
-      compression: "{{ item.compression| default(omit) }}"
-      dedup: "{{ item.dedup| default(omit) }}"
-      encryption: "{{ item.encryption| default(omit) }}"
-      keyformat: "{{ item.keyformat| default(omit) }}"
-      keylocation: "{{ item.keylocation| default(omit) }}"
-      logbias: "{{ item.logbias| default(omit) }}"
-      primarycache: "{{ item.primarycache| default(omit) }}"
-      quota: "{{ item.quota| default(omit) }}"
-      recordsize: "{{ item.recordsize| default(omit) }}"
-      refquota: "{{ item.refquota| default(omit) }}"
-      # shareiscsi: "{{ item.shareiscsi| default(omit) }}"
-      sync: "{{ item.sync| default(omit) }}"
-      volsize: "{{ item.volsize| default(omit) }}"
+      compression: "{{ item.compression | default(omit) }}"
+      dedup: "{{ item.dedup | default(omit) }}"
+      encryption: "{{ item.encryption | default(omit) }}"
+      keyformat: "{{ item.keyformat | default(omit) }}"
+      keylocation: "{{ item.keylocation | default(omit) }}"
+      logbias: "{{ item.logbias | default(omit) }}"
+      primarycache: "{{ item.primarycache | default(omit) }}"
+      quota: "{{ item.quota | default(omit) }}"
+      recordsize: "{{ item.recordsize | default(omit) }}"
+      refquota: "{{ item.refquota | default(omit) }}"
+      # shareiscsi: "{{ item.shareiscsi | default(omit) }}"
+      sync: "{{ item.sync | default(omit) }}"
+      volsize: "{{ item.volsize | default(omit) }}"
     state: "{{ item.state }}"
   notify:
     - Restart iscsitarget
@@ -140,9 +140,9 @@
 - name: Manage ZFS | Setting ZFS Filesystem Permissions
   ansible.builtin.file:
     path: "{{ item.mountpoint }}"
-    mode: "{{ item.mode| default(omit) }}"
-    owner: "{{ item.owner| default(omit) }}"
-    group: "{{ item.group| default(omit) }}"
+    mode: "{{ item.mode | default(omit) }}"
+    owner: "{{ item.owner | default(omit) }}"
+    group: "{{ item.group | default(omit) }}"
   with_items: "{{ zfs_filesystems }}"
   when: zfs_manage_filesystem_permissions
 
