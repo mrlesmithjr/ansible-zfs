@@ -5,6 +5,8 @@ exclude_paths:
   - .github/
   - .git/
   - tests/
+  - playbook.yml  # Example playbook with non-standard format
+  - client.yml    # Example playbook with non-standard format
 
 skip_list:
   - var-naming[no-role-prefix]  # Allow variables without role prefix for backwards compatibility
