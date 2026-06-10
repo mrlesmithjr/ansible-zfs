@@ -37,3 +37,8 @@
 - name: Include monitoring tasks
   ansible.builtin.include_tasks: monitoring.yml
   when: zfs_enable_monitoring
+
+- ansible.builtin.include_tasks: snapshots_scrub_slog.yml
+
+- ansible.builtin.include_tasks: datasets.yml
+  when: zfs_datasets | length > 0

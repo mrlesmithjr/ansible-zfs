@@ -30,6 +30,9 @@ zfs_debian_package_key: http://zfsonlinux.org/4D5843EA.asc
 zfs_debian_package_url: http://archive.zfsonlinux.org/debian/pool/main/z/zfsonlinux
 zfs_debian_package_version: 6
 zfs_debian_package: "zfsonlinux_{{ zfs_debian_package_version }}_all.deb"
+# Legacy per-pool auto-snapshot toggle used by manage_zfs.yml. Controls whether
+# individual pools have com.sun:auto-snapshot set. This is separate from the
+# zfs-auto-snapshot package deployment controlled by zfs_auto_snapshot_enabled below.
 zfs_enable_auto_snapshots: true
 
 # Defines if iscsitarget is installed to server iSCSI volumes
@@ -212,3 +215,76 @@ zfs_monitoring_capacity_threshold: 80
 zfs_monitoring_scrub_max_age: 8
 
 zfs_monitoring_email_dest: root@localhost
+
+# ---------------------------------------------------------------------------
+# ZFS auto-snapshot (zfs-auto-snapshot)
+# Controls installation of the zfs-auto-snapshot package and its cron schedule.
+# This is different from zfs_enable_auto_snapshots (above), which is the legacy
+# per-pool com.sun:auto-snapshot property toggle in manage_zfs.yml.
+# Set zfs_auto_snapshot_enabled: true to install the package and activate
+# the cron-based snapshot schedule. All cron scripts are disabled (mode 0644)
+# when the feature is off, ensuring no orphaned schedules run.
+# ---------------------------------------------------------------------------
+zfs_auto_snapshot_enabled: false
+zfs_auto_snapshot_package: zfs-auto-snapshot
+zfs_auto_snapshot_hourly_keep: 24
+zfs_auto_snapshot_daily_keep: 7
+zfs_auto_snapshot_weekly_keep: 4
+zfs_auto_snapshot_monthly_keep: 3
+
+# ---------------------------------------------------------------------------
+# Monthly ZFS scrub cron
+# Set zfs_scrub_enabled: true to create a root cron entry that runs
+# `zpool scrub` on the named pool. Setting it to false removes the entry.
+# ---------------------------------------------------------------------------
+zfs_scrub_enabled: false
+# Pool to scrub. Defaults to the first pool name used in zfs_pools when
+# set; override explicitly if needed.
+zfs_scrub_pool: tank
+zfs_scrub_day: "1"
+zfs_scrub_hour: "2"
+zfs_scrub_minute: "0"
+
+# ---------------------------------------------------------------------------
+# SLOG (ZFS Intent Log) device
+# Set zfs_slog_enabled: true and provide zfs_slog_device (full block device
+# path, e.g. /dev/sdb) to add the device as a log vdev to the named pool.
+# The task is idempotent: it reads `zpool status` and skips the add when a
+# log device is already present.
+# ---------------------------------------------------------------------------
+zfs_slog_enabled: false
+zfs_slog_pool: tank
+zfs_slog_device: ""
+
+# ---------------------------------------------------------------------------
+# Dataset lifecycle management
+# Populate zfs_datasets to create, configure, or remove datasets.
+# Each entry supports:
+#   name:        (required) full dataset path, e.g. tank/data
+#   mountpoint:  (optional) explicit mountpoint; omitted if not set
+#   state:       (optional) present (default) | absent
+#   properties:  (optional) dict of ZFS properties to set, e.g.:
+#                  compression: lz4
+#                  atime: "off"
+#                  recordsize: 128K
+#                  sync: disabled
+#                  quota: 100G
+#                  xattr: sa
+# ---------------------------------------------------------------------------
+zfs_datasets: []
+# Example:
+# zfs_datasets:
+#   - name: tank/data
+#     mountpoint: /tank/data
+#     state: present
+#     properties:
+#       compression: lz4
+#       atime: "off"
+#   - name: tank/backups
+#     mountpoint: /tank/backups
+#     state: present
+#     properties:
+#       recordsize: 1M
+#       compression: zstd
+#   - name: tank/old
+#     state: absent

@@ -1,0 +1,106 @@
+---
+# tasks/snapshots_scrub_slog.yml
+# Manages zfs-auto-snapshot installation, scrub cron, and SLOG device.
+# All features are disabled by default and must be explicitly opted in.
+
+# --- ZFS auto-snapshot ---
+
+- name: snapshots_scrub_slog | Install zfs-auto-snapshot package
+  ansible.builtin.package:
+    name: "{{ zfs_auto_snapshot_package }}"
+    state: present
+  become: true
+  when: zfs_auto_snapshot_enabled | bool
+
+- name: snapshots_scrub_slog | Configure auto-snapshot hourly retention
+  ansible.builtin.replace:
+    path: /etc/cron.hourly/zfs-auto-snapshot
+    regexp: '--keep=\d+'
+    replace: "--keep={{ zfs_auto_snapshot_hourly_keep }}"
+  become: true
+  when: zfs_auto_snapshot_enabled | bool
+
+- name: snapshots_scrub_slog | Configure auto-snapshot daily retention
+  ansible.builtin.replace:
+    path: /etc/cron.daily/zfs-auto-snapshot
+    regexp: '--keep=\d+'
+    replace: "--keep={{ zfs_auto_snapshot_daily_keep }}"
+  become: true
+  when: zfs_auto_snapshot_enabled | bool
+
+- name: snapshots_scrub_slog | Configure auto-snapshot weekly retention
+  ansible.builtin.replace:
+    path: /etc/cron.weekly/zfs-auto-snapshot
+    regexp: '--keep=\d+'
+    replace: "--keep={{ zfs_auto_snapshot_weekly_keep }}"
+  become: true
+  when: zfs_auto_snapshot_enabled | bool
+
+- name: snapshots_scrub_slog | Configure auto-snapshot monthly retention
+  ansible.builtin.replace:
+    path: /etc/cron.monthly/zfs-auto-snapshot
+    regexp: '--keep=\d+'
+    replace: "--keep={{ zfs_auto_snapshot_monthly_keep }}"
+  become: true
+  when: zfs_auto_snapshot_enabled | bool
+
+- name: snapshots_scrub_slog | Enable auto-snapshot cron scripts
+  ansible.builtin.file:
+    path: "{{ item }}"
+    mode: "0755"
+  become: true
+  loop:
+    - /etc/cron.hourly/zfs-auto-snapshot
+    - /etc/cron.daily/zfs-auto-snapshot
+    - /etc/cron.weekly/zfs-auto-snapshot
+    - /etc/cron.monthly/zfs-auto-snapshot
+  when: zfs_auto_snapshot_enabled | bool
+
+- name: snapshots_scrub_slog | Disable auto-snapshot cron scripts
+  ansible.builtin.file:
+    path: "{{ item }}"
+    mode: "0644"
+  become: true
+  failed_when: false
+  loop:
+    - /etc/cron.hourly/zfs-auto-snapshot
+    - /etc/cron.daily/zfs-auto-snapshot
+    - /etc/cron.weekly/zfs-auto-snapshot
+    - /etc/cron.monthly/zfs-auto-snapshot
+  when: not (zfs_auto_snapshot_enabled | bool)
+
+# --- Monthly scrub cron ---
+
+- name: snapshots_scrub_slog | Manage monthly ZFS scrub cron job
+  ansible.builtin.cron:
+    name: "ZFS pool scrub {{ zfs_scrub_pool }}"
+    job: "/sbin/zpool scrub {{ zfs_scrub_pool }}"
+    day: "{{ zfs_scrub_day }}"
+    hour: "{{ zfs_scrub_hour }}"
+    minute: "{{ zfs_scrub_minute }}"
+    user: root
+    state: "{{ 'present' if zfs_scrub_enabled | bool else 'absent' }}"
+  become: true
+
+# --- SLOG device ---
+
+- name: snapshots_scrub_slog | Configure ZFS SLOG device
+  when:
+    - zfs_slog_enabled | bool
+    - zfs_slog_device is defined
+    - zfs_slog_device | length > 0
+  become: true
+  block:
+    - name: snapshots_scrub_slog | Check current zpool log device status
+      ansible.builtin.command: "zpool status {{ zfs_slog_pool }}"
+      register: zfs_slog_pool_status
+      changed_when: false
+      failed_when: zfs_slog_pool_status.rc not in [0, 1]
+
+    # NOTE: Once any log device is present the guard below ('logs' not in stdout)
+    # prevents adding another. To replace a SLOG device you must first remove the
+    # existing one manually: zpool remove <pool> <old-device>
+    - name: snapshots_scrub_slog | Add SLOG device to pool
+      ansible.builtin.command: "zpool add {{ zfs_slog_pool }} log {{ zfs_slog_device }}"
+      when: "'logs' not in zfs_slog_pool_status.stdout"
+      changed_when: true

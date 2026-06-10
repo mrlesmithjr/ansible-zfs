@@ -1,0 +1,31 @@
+---
+# tasks/datasets.yml
+# Dataset lifecycle management: create, configure, or remove ZFS datasets.
+# Activated only when zfs_datasets list is non-empty.
+# Each entry supports: name, mountpoint, state (present/absent),
+# and an optional properties dict (recordsize, compression, atime, sync,
+# quota, xattr, and any other valid ZFS property).
+
+- name: datasets | Warn if dataset entry is missing a mountpoint
+  ansible.builtin.debug:
+    msg: "Dataset {{ item.name }} has no mountpoint defined — mountpoint property will not be set."
+  when:
+    - item.state | default('present') == 'present'
+    - item.mountpoint is not defined
+  loop: "{{ zfs_datasets }}"
+  loop_control:
+    label: "{{ item.name }}"
+
+- name: datasets | Ensure ZFS datasets are in correct state
+  community.general.zfs:
+    name: "{{ item.name }}"
+    state: "{{ item.state | default('present') }}"
+    extra_zfs_properties: >-
+      {{
+        (item.properties | default({}))
+        | combine({'mountpoint': item.mountpoint} if item.mountpoint is defined else {})
+      }}
+  loop: "{{ zfs_datasets }}"
+  loop_control:
+    label: "{{ item.name }}"
+  become: true
